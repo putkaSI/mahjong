@@ -35,9 +35,9 @@ export function zvokZmaga(): void {
 }
 
 /* ---------- glasba v ozadju (datoteke v public/zvok) ---------- */
-const SEZNAMI: Record<string, string[]> = { glasba: ["glasba-1.mp3", "glasba-2.mp3", "glasba-3.mp3", "glasba-4.mp3"] };
-/** Izbire glasbe, ki jih ponudimo (zvoki narave pridejo, ko bo datoteka na voljo). */
-export const IZBIRE_GLASBE: [string, string][] = [["brez", "Brez glasbe"], ["glasba", "Mirna kitajska glasba"]];
+const SEZNAMI: Record<string, string[]> = { glasba: ["glasba-1.mp3", "glasba-2.mp3", "glasba-3.mp3", "glasba-4.mp3"], narava: ["narava.mp3"] };
+/** Izbire glasbe v nastavitvah. */
+export const IZBIRE_GLASBE: [string, string][] = [["brez", "Brez glasbe"], ["glasba", "Mirna kitajska glasba"], ["narava", "Zvoki narave: ptički in reka"]];
 
 /** Hitri vklop in izklop glasbe (zapomni si zadnjo izbiro). */
 export function preklopiGlasbo(): void {
