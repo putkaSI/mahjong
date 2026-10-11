@@ -11,8 +11,14 @@ await mkdir(SURO, { recursive: true }); await mkdir(OUT, { recursive: true });
 const exists = p => access(p).then(() => true, () => false);
 const ffmpeg = process.env.FFMPEG || "ffmpeg";
 
+// Kvota je omejena, zato najprej to, kar bo mami potrebovala najprej.
+const PREDNOST = ["kraj-ljubljana", "kraj-bled", "kraj-piran", "oblaki-jesen", "kraj-benetke", "kraj-toskana",
+  "praznik-bozic", "praznik-rojstnidan", "oblaki-zima", "kraj-alpe", "kraj-pariz", "kraj-santorini"];
+const rang = id => { const i = PREDNOST.indexOf(id); return i < 0 ? PREDNOST.length : i; };
+const vrsta = [...cfg.slike].sort((a, b) => rang(a.id) - rang(b.id));
+
 let client = null;
-for (const s of cfg.slike) {
+for (const s of vrsta) {
   if (only.length && !only.includes(s.id)) continue;
   const webp = `${OUT}/${s.id}.webp`, png = `${SURO}/${s.id}.png`;
   if (await exists(webp)) { console.log(`= ${s.id} že obstaja`); continue; }
