@@ -15,7 +15,7 @@ export default defineConfig(({ command }) => ({
         description: "Klasičen Mahjong pasjansa: mirno, brez reklam, deluje brez interneta.",
         lang: "sl",
         display: "standalone",
-        orientation: "any",
+        orientation: "portrait", // na telefonu pokončno (postavitve so prilagojene); računalnik to prezre
         background_color: "#dccbaa",
         theme_color: "#6b4a2b",
         icons: [

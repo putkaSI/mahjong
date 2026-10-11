@@ -56,19 +56,44 @@ function predvajaj(): void {
   predvajalnik.volume = Math.min(1, .35 * S.nastavitve.glasnost);
   predvajalnik.onended = () => { indeks++; predvajaj(); };
   predvajalnik.onerror = () => { if (s.length > 1 && indeks < s.length * 2) { indeks++; predvajaj(); } };
-  predvajalnik.play().catch(() => { /* počaka na prvi klik */ });
+  if (vFokusu()) predvajalnik.play().catch(pocakajNaDotik);
 }
+
+// samo za samodejne preizkuse med razvojem
+if (import.meta.env.DEV) (window as unknown as { __zvok: unknown }).__zvok = () => predvajalnik ? (predvajalnik.paused ? "ustavljena" : "igra") : "ni";
+
+/** Igra je spredaj: vidna in v fokusu. Sicer ne sme biti nobenega zvoka. */
+const vFokusu = () => !document.hidden && document.hasFocus();
 
 export function posodobiGlasbo(): void {
   const izbira = S.nastavitve.glasba;
-  if (!(izbira in SEZNAMI)) { predvajalnik?.pause(); return; }
+  if (!(izbira in SEZNAMI) || !vFokusu()) { predvajalnik?.pause(); return; }
   if (izbira !== seznam || !predvajalnik) { seznam = izbira; indeks = Math.floor(Math.random() * SEZNAMI[izbira].length); predvajaj(); return; }
   predvajalnik.volume = Math.min(1, .35 * S.nastavitve.glasnost);
-  if (predvajalnik.paused) predvajalnik.play().catch(() => {});
+  if (predvajalnik.paused) predvajalnik.play().catch(pocakajNaDotik);
+}
+
+/** Če brskalnik predvajanja ne dovoli, poskusi znova ob naslednjem dotiku. */
+let caka = false;
+function pocakajNaDotik(): void {
+  if (caka) return;
+  caka = true;
+  const enkrat = () => { caka = false; removeEventListener("pointerdown", enkrat); avdio(); posodobiGlasbo(); };
+  addEventListener("pointerdown", enkrat);
 }
 
 /** Brskalnik dovoli zvok šele po prvem kliku. */
-export function odkleniZvokObKliku(): void {
-  const enkrat = () => { avdio(); posodobiGlasbo(); removeEventListener("pointerdown", enkrat); };
-  addEventListener("pointerdown", enkrat);
+export function odkleniZvokObKliku(): void { pocakajNaDotik(); }
+
+/** Ko igra gre v ozadje (druga aplikacija, seznam aplikacij, drugo okno), utihne; ko se vrne, se glasba nadaljuje. */
+export function nadzorujFokus(): void {
+  const preveri = () => {
+    if (vFokusu()) { if (ctx?.state === "suspended") ctx.resume().catch(() => {}); posodobiGlasbo(); }
+    else { predvajalnik?.pause(); if (ctx?.state === "running") ctx.suspend().catch(() => {}); }
+  };
+  document.addEventListener("visibilitychange", preveri);
+  addEventListener("blur", preveri);
+  addEventListener("focus", preveri);
+  addEventListener("pagehide", () => predvajalnik?.pause());
+  addEventListener("pageshow", preveri);
 }

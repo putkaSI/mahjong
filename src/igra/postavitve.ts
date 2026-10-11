@@ -41,7 +41,7 @@ function razdaljaDoRoba(m: boolean[][]): number[][] {
 const NAJVISJE = 6;
 
 /** Iz maske ('#' = ploščica) naredi postavitev z natanko `cilj` ploščicami, simetrično, kjer se da. */
-export function izMaske(id: string, ime: string, maska: string[], slog: SlogVisin, seme: number, cilj = 144): Postavitev | null {
+export function izMaske(id: string, ime: string, maska: string[], slog: SlogVisin, seme: number, cilj = 144, strogo = false): Postavitev | null {
   const H = maska.length, W = Math.max(...maska.map(r => r.length));
   const m = maska.map(r => Array.from({ length: W }, (_, x) => r[x] === "#"));
   const osnova = m.flat().filter(Boolean).length;
@@ -71,7 +71,10 @@ export function izMaske(id: string, ime: string, maska: string[], slog: SlogVisi
     for (const c of celice) {
       const delta = c.p >= 0 ? 2 : 1;
       if (delta > Math.abs(razlika)) continue;
-      const hz = h[c.y][c.x], dd = d[c.y][c.x];
+      // pri paru štejeta obe celici: višja ne sme čez mejo, nižja ne pod 1
+      // (samo pri novih postavitvah, da se obstoječe ne spremenijo in shranjene igre ostanejo veljavne)
+      const hz = c.p < 0 || !strogo ? h[c.y][c.x] : dir === 1 ? Math.max(h[c.y][c.x], h[c.y][c.p]) : Math.min(h[c.y][c.x], h[c.y][c.p]);
+      const dd = d[c.y][c.x];
       if (dir === 1 && hz >= NAJVISJE) continue;
       if (dir === -1 && hz <= 1) continue;
       const score = (dir === 1 ? dd * 2 - hz * 3 : hz * 3 - dd * 2) + R() * 2.5;

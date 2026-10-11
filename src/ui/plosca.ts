@@ -1,6 +1,6 @@
 // Izris mize: ploščice kot elementi z rahlim 3D robom, prilagajanje velikosti zaslonu in animacije.
 import type { Igra } from "../igra/stanje";
-import { VRSTE } from "../art/ploscice";
+import { VRSTE, imaOznake } from "../art/ploscice";
 import { S } from "../shramba";
 
 const W = 60, H = 78, DX = -5, DY = -6;   // velikost ploščice in zamik višje plasti (gor-levo)
@@ -41,6 +41,8 @@ export class Plosca {
     });
     this.el.appendChild(frag);
     if (st.izbrana >= 0) this.pl[st.izbrana]?.classList.add("izbrana");
+    // dolg pritisk na telefonu naj ne odpre menija za kopiranje
+    this.okvir.oncontextmenu = e => e.preventDefault();
     this.el.onclick = e => {
       const t = (e.target as HTMLElement).closest(".pl") as HTMLElement | null;
       if (t && !t.classList.contains("odhaja")) this.naKlik(Number(t.dataset.i));
@@ -48,14 +50,14 @@ export class Plosca {
   }
 
   private vsebina(vrsta: string): string {
-    const p = S.nastavitve.pomoc && POMOC[vrsta] ? `<span class="pl-pomoc">${POMOC[vrsta]}</span>` : "";
+    const p = S.nastavitve.pomoc && POMOC[vrsta] && !imaOznake(S.nastavitve.slogPloscic) ? `<span class="pl-pomoc">${POMOC[vrsta]}</span>` : "";
     return `<svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${vrsta}"/></svg>${p}`;
   }
 
   /** Miza naj zapolni prostor, a ploščice naj ne bodo prevelike. */
   prilagodi(): void {
-    const r = this.okvir.getBoundingClientRect();
-    const k = Math.min((r.width - 24) / this.sirina, (r.height - 24) / this.visina, 1.9);
+    const r = this.okvir.getBoundingClientRect(), rob = r.width < 600 ? 6 : 24;
+    const k = Math.min((r.width - rob) / this.sirina, (r.height - rob) / this.visina, 1.9);
     const x = (r.width - this.sirina * k) / 2, y = (r.height - this.visina * k) / 2;
     this.el.style.transform = `translate(${x}px, ${y}px) scale(${k})`;
   }
@@ -89,7 +91,7 @@ export class Plosca {
     for (const i of [a, b]) {
       const d = this.pl[i]; if (!d) continue;
       d.classList.remove("namig"); void d.offsetWidth; d.classList.add("namig");
-      setTimeout(() => d.classList.remove("namig"), 3200);
+      setTimeout(() => d.classList.remove("namig"), 6000);
     }
   }
 

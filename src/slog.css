@@ -56,23 +56,51 @@ body[data-mehko="true"] .ozadje-plast { filter: saturate(.85) brightness(.8) sep
 .oznaka-kraja { position: absolute; left: 14px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); font-family: var(--naslovi); font-size: 16px; color: #4a3420; background: rgba(250, 243, 228, .78); padding: 4px 14px; border-radius: 99px; pointer-events: none; }
 
 /* ---------- ploščice ---------- */
+/* barve ploščic po slogih: lice (a, b, c), koščeni bok (s1-s3) in hrbet (r1-r3) */
+:root, [data-slog="klasicen"] {
+  --pl-a: #fcf6e8; --pl-b: #f2e7cd; --pl-c: #e9dcbd; --pl-s1: #ebdcba; --pl-s2: #e2d0a8; --pl-s3: #d6bf92;
+  --pl-r1: #a87445; --pl-r2: #8f5e31; --pl-r3: #7a4f28;
+}
+[data-slog="razlocen"] {
+  --pl-a: #fffcf3; --pl-b: #f8f0dc; --pl-c: #efe4c8; --pl-s1: #ece0c2; --pl-s2: #e2d1ab; --pl-s3: #d4bd8e;
+  --pl-r1: #a87445; --pl-r2: #8f5e31; --pl-r3: #7a4f28;
+}
+[data-slog="zad"] {
+  --pl-a: #f8f0d9; --pl-b: #efe2c0; --pl-c: #e5d4a9; --pl-s1: #e8d9b4; --pl-s2: #dccaa0; --pl-s3: #cdb684;
+  --pl-r1: #3b8a68; --pl-r2: #2a6d51; --pl-r3: #1d553e;
+}
+.zaslon-igra, .pl { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.plosca-okvir { touch-action: manipulation; }
 .pl { position: absolute; width: 60px; height: 78px; border-radius: 7px; cursor: pointer;
-  background: linear-gradient(160deg, #fcf6e8 0%, #f2e7cd 70%, #e9dcbd 100%);
+  background: linear-gradient(160deg, var(--pl-a) 0%, var(--pl-b) 70%, var(--pl-c) 100%);
   box-shadow: inset 0 0 0 1px rgba(140, 105, 60, .25), inset 2px 2px 0 rgba(255, 255, 255, .6),
-    1px 1px 0 #ebdcba, 2px 2px 0 #e2d0a8, 3px 3px 0 #d6bf92, 4px 5px 0 #a87445, 5px 6px 0 #8f5e31, 6px 7px 0 #7a4f28, 7px 11px 9px rgba(35, 20, 8, .33);
+    1px 1px 0 var(--pl-s1), 2px 2px 0 var(--pl-s2), 3px 3px 0 var(--pl-s3), 4px 5px 0 var(--pl-r1), 5px 6px 0 var(--pl-r2), 6px 7px 0 var(--pl-r3), 7px 11px 9px rgba(35, 20, 8, .33);
   transition: transform .28s ease, box-shadow .28s ease, filter .2s; }
 .pl:hover { filter: brightness(1.03); }
 .pl-lice { position: absolute; left: 4px; top: 5px; width: 52px; height: 67px; pointer-events: none; }
-.pl.izbrana { transform: translate(-3px, -9px); background: linear-gradient(160deg, #fffbf1 0%, #f7ecd4 70%, #efe1c2 100%);
-  box-shadow: inset 0 0 0 1px rgba(160, 115, 50, .35), inset 2px 2px 0 rgba(255, 255, 255, .7),
-    1px 1px 0 #ebdcba, 2px 2px 0 #e2d0a8, 3px 3px 0 #d6bf92, 4px 5px 0 #a87445, 5px 6px 0 #8f5e31, 6px 7px 0 #7a4f28, 10px 20px 16px rgba(35, 20, 8, .36); }
-.pl.namig { animation: sij 1.05s ease-in-out 3; }
-@keyframes sij { 0%, 100% { filter: none; } 50% { filter: drop-shadow(0 0 9px rgba(255, 196, 80, .95)) brightness(1.07); } }
+/* izbrana: dvignjena, toplo rumena in z zlatim okvirjem, da jo najdeš tudi po tem, ko pogledaš drugam */
+.pl.izbrana { transform: translate(-3px, -10px); background: linear-gradient(160deg, #fff4cc 0%, #fbe19b 70%, #f4d27c 100%);
+  box-shadow: 0 0 0 3px #d18a12, 0 0 18px 6px rgba(240, 170, 40, .65), inset 2px 2px 0 rgba(255, 255, 255, .7),
+    1px 1px 0 var(--pl-s1), 2px 2px 0 var(--pl-s2), 3px 3px 0 var(--pl-s3), 4px 5px 0 var(--pl-r1), 5px 6px 0 var(--pl-r2), 6px 7px 0 var(--pl-r3), 10px 22px 16px rgba(35, 20, 8, .38); }
+/* namig: oranžen utripajoč okvir, nekaj sekund */
+.pl.namig { outline: 5px solid #ff8a1c; outline-offset: 2px; animation: namig 1.1s ease-in-out 5; }
+@keyframes namig {
+  0%, 100% { outline-color: rgba(255, 138, 28, 1); filter: drop-shadow(0 0 12px rgba(255, 150, 30, .95)) brightness(1.08); translate: 0 -5px; }
+  50% { outline-color: rgba(255, 138, 28, .65); filter: none; translate: 0 0; }
+}
 .pl.odhaja { pointer-events: none; }
 .pl-pomoc { position: absolute; left: 4px; top: 2px; font: 700 13px/1 var(--pisava); color: var(--rdeca); background: rgba(252, 246, 232, .9); border-radius: 4px; padding: 1px 2px; }
 .pl.mini { position: relative; display: inline-block; width: 46px; height: 60px; cursor: default; transform: none;
-  box-shadow: inset 0 0 0 1px rgba(140, 105, 60, .25), 2px 2px 0 #e2d0a8, 3px 4px 0 #a87445, 4px 5px 0 #7a4f28, 5px 8px 7px rgba(35, 20, 8, .28); }
+  box-shadow: inset 0 0 0 1px rgba(140, 105, 60, .25), 2px 2px 0 var(--pl-s2), 3px 4px 0 var(--pl-r1), 4px 5px 0 var(--pl-r3), 5px 8px 7px rgba(35, 20, 8, .28); }
 .pl.mini .pl-lice { left: 3px; top: 4px; width: 40px; height: 52px; }
+/* izbira sloga ploščic v nastavitvah */
+.slogi { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 10px; }
+.slog-izbira { position: relative; display: grid; gap: 8px; padding: 12px; border: 2px solid var(--rob); border-radius: 14px; background: #fffaf0; cursor: pointer; }
+.slog-izbira input { position: absolute; opacity: 0; }
+.slog-izbira:has(input:checked) { border-color: var(--les-svetel); box-shadow: 0 0 0 3px rgba(200, 155, 85, .35); }
+.slog-izbira:has(input:focus-visible) { outline: 3px solid #c8862e; }
+.slog-primeri { display: flex; gap: 8px; justify-content: center; padding: 6px 0 4px; }
+.slog-izbira b { font-size: 18px; } .slog-izbira small { color: var(--crnilo-mehko); font-size: 14px; }
 
 /* ---------- pogovorna okna ---------- */
 .pogovor-ozadje { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(45, 28, 12, .38); backdrop-filter: blur(2px); animation: pojavi .35s ease; }
@@ -174,12 +202,19 @@ input[type=range] { accent-color: #8a5a2e; width: min(260px, 100%); }
   .stat { min-width: 0; } .stat > span { font-size: 10px; letter-spacing: .04em; }
   .stat > b { font-size: 18px; padding: 0 6px; min-width: 44px; }
   .vrh-gumbi { gap: 5px; }
-  .vgumb { min-width: 56px; padding: 4px 4px 3px; font-size: 11px; }
+  .vgumb { min-width: 50px; padding: 4px 3px 3px; font-size: 11px; }
+  .oznaka-kraja { display: none; }
   .vgumb .ikona { width: 22px; height: 22px; }
   .znacka { font-size: 11px; min-width: 20px; padding: 0 5px; top: -6px; right: -5px; }
-  .oznaka-kraja { font-size: 13px; left: 8px; }
   .velik-gumb { font-size: 19px; padding: 14px 16px; }
   .pogovor.meni .pogovor-gumbi { grid-template-columns: 1fr; }
   .glava { flex-wrap: wrap; }
+}
+@media (max-width: 380px) {
+  .vrh { gap: 2px; padding: 4px 3px; }
+  .stat > b { font-size: 16px; padding: 0 3px; min-width: 36px; }
+  .stat > span { font-size: 9px; letter-spacing: 0; }
+  .vrh-gumbi { gap: 3px; }
+  .vgumb { min-width: 46px; font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

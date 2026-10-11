@@ -1,14 +1,14 @@
 // Igralni zaslon: zgornja lesena vrstica, miza, namigi, mešanje, meni in zmaga.
 import { Igra, type Nacin } from "../igra/stanje";
 import type { Tezavnost } from "../igra/pravila";
-import { postavitev, vsePostavitve } from "../igra/oblike";
+import { postavitev, postavitveZa } from "../igra/oblike";
 import { KRAJI, kraj } from "../kraji";
 import { S, shrani } from "../shramba";
 import { nastaviOzadje, samodejnoOzadje, cvetniDez } from "../ozadje";
 import { zvokPar, zvokZmaga, preklopiGlasbo } from "../zvok";
 import { Plosca } from "./plosca";
 import { pogovor, obvestilo, IKONE, jeOdprtPogovor, zapriVse } from "./pogovor";
-import { nav, zaslon, fmtCas } from "./nav";
+import { nav, zaslon, fmtCas, jeTelefon } from "./nav";
 
 export type Zacetek = { nacin: Nacin; postavitevId: string; krajId?: string; stopnja?: number };
 const BASE = import.meta.env.BASE_URL;
@@ -41,7 +41,16 @@ export function zacniNovo(z: Zacetek): void {
   } else zacni();
 }
 
-function zacni2(z: Zacetek, tez: Tezavnost, seme?: number): void {
+/** Na telefonu stopnje potovanja dobijo ozko postavitev (vsaka stopnja vedno isto). */
+export function zaNapravo(z: Zacetek): Zacetek {
+  if (!jeTelefon() || z.postavitevId.startsWith("t-") || z.nacin !== "potovanje" || z.krajId == null) return z;
+  const ozke = postavitveZa(true).filter(p => !PRAZNICNE.test(p.id));
+  const g = KRAJI.findIndex(k => k.id === z.krajId) * 4 + (z.stopnja ?? 0);
+  return { ...z, postavitevId: ozke[(g * 7) % ozke.length].id };
+}
+
+function zacni2(z0: Zacetek, tez: Tezavnost, seme?: number): void {
+  const z = zaNapravo(z0);
   const p = postavitev(z.postavitevId)!;
   const sir = Math.max(...p.polozaji.map(q => q.x)), vis = Math.max(...p.polozaji.map(q => q.y)) * 1.3;
   const transponirano = innerHeight > innerWidth * 1.15 && sir > vis;
@@ -81,7 +90,7 @@ function prikazi(g: Igra): void {
   z.querySelector("#g-meni")!.addEventListener("click", meni);
   osvezi();
   tajmer = window.setInterval(() => {
-    if (!igra || document.hidden || jeOdprtPogovor()) return;
+    if (!igra || document.hidden || !document.hasFocus() || jeOdprtPogovor()) return;
     igra.st.cas++; osvezi();
     if (igra.st.cas % 5 === 0) shrani();
   }, 1000);
@@ -191,10 +200,10 @@ export function naslednjaStopnja(): Zacetek | null {
 }
 
 /** Naključna oblika, ki je še ni rešila (če so rešene vse, katera koli). */
-const PRAZNICNE = /^(jelka|jajce|torta|crka-l)-/;
+const PRAZNICNE = /^(t-)?(jelka|jajce|torta|crka-l)-/;
 export function nakljucnaPostavitev(razen?: string): string {
   // praznične oblike pridejo na vrsto samo za praznike (na seznamu so vedno)
-  const vse = vsePostavitve().map(p => p.id).filter(id => id !== razen && !PRAZNICNE.test(id));
+  const vse = postavitveZa(jeTelefon()).map(p => p.id).filter(id => id !== razen && !PRAZNICNE.test(id));
   const nove = vse.filter(id => !S.napredek.resitve[id]);
   const izbor = nove.length ? nove : vse;
   return izbor[Math.floor(Math.random() * izbor.length)];

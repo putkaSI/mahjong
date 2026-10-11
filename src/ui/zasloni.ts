@@ -2,13 +2,13 @@
 import { S } from "../shramba";
 import { pozdrav, praznik, praznicnoVoscilo } from "../koledar";
 import { KRAJI } from "../kraji";
-import { vsePostavitve, postavitev } from "../igra/oblike";
+import { postavitveZa, postavitev } from "../igra/oblike";
 import type { Postavitev } from "../igra/postavitve";
 import { nastaviOzadje, samodejnoOzadje } from "../ozadje";
 import { IKONE, pogovor } from "./pogovor";
 import { preklopiGlasbo } from "../zvok";
-import { nav, zaslon } from "./nav";
-import { zacniNovo, naslednjaStopnja, nakljucnaPostavitev, razglednica } from "./igralni";
+import { nav, zaslon, jeTelefon } from "./nav";
+import { zacniNovo, naslednjaStopnja, nakljucnaPostavitev, razglednica, zaNapravo } from "./igralni";
 
 const mini = (id: string) => `<span class="pl mini"><svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${id}"/></svg></span>`;
 const glava = (naslov: string, podnaslov = "") => `<header class="glava"><button class="gumb nazaj" id="nazaj">${IKONE.domov}<span>Domov</span></button>
@@ -19,7 +19,7 @@ export function domov(): void {
   const vos = praznicnoVoscilo(praznik());
   const ig = S.igra, p = ig ? postavitev(ig.postavitevId) : null;
   const nasl = naslednjaStopnja(), kNasl = nasl ? KRAJI.find(k => k.id === nasl.krajId) : null;
-  const resenih = Object.keys(S.napredek.resitve).length, vseh = vsePostavitve().length;
+  const moje = postavitveZa(jeTelefon()), vseh = moje.length, resenih = moje.filter(p => S.napredek.resitve[p.id]).length;
   const z = zaslon("zaslon-domov", `<div class="domov-kartica">
       <div class="logotip" aria-hidden="true">${mini("dR")}${mini("p1")}${mini("b1")}${mini("dG")}</div>
       <h1>${pozdrav()}</h1>${vos ? `<p class="voscilo">${vos}</p>` : ""}
@@ -66,7 +66,8 @@ export function potovanje(): void {
 /** Ponovitev že odkritih stopenj kraja. */
 function izbiraStopnje(krajId: string): void {
   const k = KRAJI.find(x => x.id === krajId)!, n = S.napredek.potovanje[k.id] ?? 0;
-  const gumbi = k.stopnje.slice(0, Math.min(4, n + 1)).map((pid, i) => {
+  const gumbi = k.stopnje.slice(0, Math.min(4, n + 1)).map((pid0, i) => {
+    const pid = zaNapravo({ nacin: "potovanje", postavitevId: pid0, krajId: k.id, stopnja: i }).postavitevId;
     const r = S.napredek.resitve[pid] ?? 0, p = postavitev(pid)!;
     const opis = i < n ? (r > 1 ? `rešeno, ponovljeno ${r - 1}×` : "rešeno") : "naslednja";
     return { tekst: `${i + 1}. stopnja: ${p.ime}<small>${opis}</small>`, glavni: i === n, akcija: () => zacniNovo({ nacin: "potovanje", postavitevId: pid, krajId: k.id, stopnja: i }) };
@@ -93,10 +94,11 @@ function sličica(p: Postavitev): HTMLCanvasElement {
 }
 
 const PRAZNICNE: Record<string, string[]> = { bozic: ["jelka-1", "jelka-2"], novoleto: ["zvezda-1", "jelka-3"], velikanoc: ["jajce-1", "jajce-2"], rojstnidan: ["torta-1", "crka-l-1"] };
+const PRAZNICNE_TELEFON: Record<string, string[]> = { bozic: ["t-jelka-1", "t-jelka-2"], novoleto: ["t-diamant-1", "t-jelka-3"], velikanoc: ["t-jajce-1", "t-jajce-2"], rojstnidan: ["t-torta-1", "t-srce-1"] };
 
 export function postavitve(): void {
   nastaviOzadje(samodejnoOzadje());
-  const vse = vsePostavitve(), pr = praznik();
+  const telefon = jeTelefon(), vse = postavitveZa(telefon), pr = praznik();
   const z = zaslon("zaslon-seznam", glava("Proste postavitve", "Izberi obliko. Kljukica pomeni, da si jo že rešila.")
     + `<div class="seznam-orodja"><button class="gumb glavni" id="nakljucna">${IKONE.ploscice}<span>Naključna nova oblika</span></button></div>`
     + (pr ? `<h2 class="seznam-naslov">Praznične oblike</h2><div class="oblike" id="praznicne"></div><h2 class="seznam-naslov">Vse oblike</h2>` : "")
@@ -112,6 +114,6 @@ export function postavitve(): void {
     b.addEventListener("click", () => zacniNovo({ nacin: "prosto", postavitevId: p.id }));
     return b;
   };
-  if (pr) z.querySelector("#praznicne")!.append(...PRAZNICNE[pr].map(id => kartica(postavitev(id)!)));
+  if (pr) z.querySelector("#praznicne")!.append(...(telefon ? PRAZNICNE_TELEFON : PRAZNICNE)[pr].map(id => kartica(postavitev(id)!)));
   z.querySelector("#oblike")!.append(...vse.map(kartica));
 }

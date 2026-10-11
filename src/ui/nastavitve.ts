@@ -1,6 +1,6 @@
 // Nastavitve in pomoč.
 import { S, shrani, type Glasba } from "../shramba";
-import { VRSTE } from "../art/ploscice";
+import { VRSTE, SLOGI_PLOSCIC, risba, vstaviSimbole, type SlogPloscic } from "../art/ploscice";
 import { KRAJI } from "../kraji";
 import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje } from "../ozadje";
 import { posodobiGlasbo, zvokPar, IZBIRE_GLASBE } from "../zvok";
@@ -30,6 +30,12 @@ export function nastavitve(nazaj: () => void): void {
       </div></div>
       <label class="nastavitev" for="n-glasnost"><span><b>Glasnost</b></span><input type="range" id="n-glasnost" min="0.1" max="1" step="0.05" value="${n.glasnost}"></label>
     </section>
+    <section><h2>Ploščice</h2>
+      <div class="slogi" role="radiogroup" aria-label="Slog ploščic">${SLOGI_PLOSCIC.map(s => `<label class="slog-izbira" data-slog="${s.id}">
+        <input type="radio" name="slog" value="${s.id}"${n.slogPloscic === s.id ? " checked" : ""}>
+        <span class="slog-primeri">${["z5", "vV", "p3", "r2"].map(id => `<span class="pl mini"><svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true">${risba(id, s.id)}</svg></span>`).join("")}</span>
+        <b>${s.ime}</b><small>${s.opis}</small></label>`).join("")}</div>
+    </section>
     <section><h2>Videz</h2>
       ${stikalo("n-pomoc", "Pomožne oznake na ploščicah", "Majhna številka ali črka v kotu ploščice (V, J, Z, S za vetrove)", n.pomoc)}
       ${stikalo("n-mehko", "Mehkejše ozadje", "Ozadje je temnejše in manj bleščeče", n.mehko)}
@@ -50,6 +56,9 @@ export function nastavitve(nazaj: () => void): void {
     n.glasba = r.value as Glasba; if (n.glasba !== "brez") n.zadnjaGlasba = n.glasba; shrani(); posodobiGlasbo();
   }));
   z.querySelector<HTMLInputElement>("#n-glasnost")!.addEventListener("change", e => { n.glasnost = Number((e.target as HTMLInputElement).value); shrani(); posodobiGlasbo(); zvokPar(); });
+  z.querySelectorAll<HTMLInputElement>("input[name=slog]").forEach(r => r.addEventListener("change", () => {
+    n.slogPloscic = r.value as SlogPloscic; shrani(); vstaviSimbole(n.slogPloscic);
+  }));
   z.querySelector<HTMLInputElement>("#n-pomoc")!.addEventListener("change", e => { n.pomoc = (e.target as HTMLInputElement).checked; shrani(); });
   z.querySelector<HTMLInputElement>("#n-mehko")!.addEventListener("change", e => { n.mehko = (e.target as HTMLInputElement).checked; posodobi(); document.body.dataset.mehko = String(n.mehko); });
   z.querySelector<HTMLInputElement>("#n-gibanje")!.addEventListener("change", e => { n.gibanje = (e.target as HTMLInputElement).checked; shrani(); });

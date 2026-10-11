@@ -1,6 +1,7 @@
 // Shranjevanje nastavitev, napredka in trenutne igre v brskalnik (brez računa, deluje brez interneta).
 import type { ShranjenaIgra } from "./igra/stanje";
 import type { Tezavnost } from "./igra/pravila";
+import type { SlogPloscic } from "./art/ploscice";
 
 export type Glasba = "brez" | "narava" | "glasba";
 export type Nastavitve = {
@@ -8,6 +9,7 @@ export type Nastavitve = {
   zvok: boolean; glasba: Glasba; zadnjaGlasba: string; glasnost: number;
   ozadje: string;                     // "samodejno" ali id slike
   gibanje: boolean; pomoc: boolean; mehko: boolean;
+  slogPloscic: SlogPloscic;
 };
 export type Napredek = {
   resitve: Record<string, number>;      // postavitev -> kolikokrat rešena
@@ -18,7 +20,7 @@ type Vse = { nastavitve: Nastavitve; napredek: Napredek; igra: ShranjenaIgra | n
 
 const KLJUC = "mahjong-v1";
 const PRIVZETO: Vse = {
-  nastavitve: { ime: "", rojstniDan: "", zvok: true, glasba: "brez", zadnjaGlasba: "glasba", glasnost: .6, ozadje: "samodejno", gibanje: true, pomoc: false, mehko: false },
+  nastavitve: { ime: "", rojstniDan: "", zvok: true, glasba: "brez", zadnjaGlasba: "glasba", glasnost: .6, ozadje: "samodejno", gibanje: true, pomoc: false, mehko: false, slogPloscic: "klasicen" },
   napredek: { resitve: {}, potovanje: {}, namigi: 3, tezavnost: "srednja", krog: 0 },
   igra: null,
 };
@@ -26,9 +28,14 @@ const PRIVZETO: Vse = {
 function preberi(): Vse {
   try {
     const d = JSON.parse(localStorage.getItem(KLJUC) || "null");
-    if (d) return { nastavitve: { ...PRIVZETO.nastavitve, ...d.nastavitve }, napredek: { ...PRIVZETO.napredek, ...d.napredek }, igra: d.igra ?? null };
+    if (d) return { nastavitve: { ...PRIVZETO.nastavitve, slogPloscic: privzetiSlog(), ...d.nastavitve }, napredek: { ...PRIVZETO.napredek, ...d.napredek }, igra: d.igra ?? null };
   } catch { /* prazna shramba */ }
-  return structuredClone(PRIVZETO);
+  const v = structuredClone(PRIVZETO); v.nastavitve.slogPloscic = privzetiSlog();
+  return v;
+}
+/** Na telefonu so privzete razločne ploščice (branje brez očal), drugje klasične. */
+function privzetiSlog(): SlogPloscic {
+  try { return Math.min(innerWidth, innerHeight) < 600 ? "razlocen" : "klasicen"; } catch { return "klasicen"; }
 }
 export const S: Vse = preberi();
 export function shrani(): void { try { localStorage.setItem(KLJUC, JSON.stringify(S)); } catch { /* polna shramba */ } }
