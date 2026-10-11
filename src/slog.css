@@ -111,7 +111,9 @@ body[data-mehko="true"] .tonacija { background: radial-gradient(ellipse at cente
   background: linear-gradient(160deg, var(--pl-a) 0%, var(--pl-b) 70%, var(--pl-c) 100%);
   box-shadow: inset 0 0 0 1px rgba(140, 105, 60, .25), inset 2px 2px 0 rgba(255, 255, 255, .6),
     1px 1px 0 var(--pl-s1), 2px 2px 0 var(--pl-s2), 3px 3px 0 var(--pl-s3), 4px 5px 0 var(--pl-r1), 5px 6px 0 var(--pl-r2), 6px 7px 0 var(--pl-r3), 7px 11px 9px rgba(35, 20, 8, .33);
-  transition: transform .28s ease, box-shadow .28s ease, filter .2s; }
+  /* vsaka ploščica na svoji plasti: sprememba ene ne zahteva ponovnega risanja sosed;
+     animira se samo premik (to naredi grafični čip), senca se zamenja naenkrat */
+  will-change: transform; transition: transform .2s ease; }
 @media (hover: hover) { .pl:hover { filter: brightness(1.03); } }
 .pl-lice { position: absolute; left: 4px; top: 5px; width: 52px; height: 67px; pointer-events: none; }
 /* izbrana: dvignjena, toplo rumena in z zlatim okvirjem, da jo najdeš tudi po tem, ko pogledaš drugam */

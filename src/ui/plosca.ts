@@ -43,9 +43,11 @@ export class Plosca {
     if (st.izbrana >= 0) this.pl[st.izbrana]?.classList.add("izbrana");
     // dolg pritisk na telefonu naj ne odpre menija za kopiranje
     this.okvir.oncontextmenu = e => e.preventDefault();
-    this.el.onclick = e => {
+    // odziv že ob dotiku (pointerdown), ne šele ob dvigu prsta (click)
+    this.el.onpointerdown = e => {
+      if (e.button !== 0) return;
       const t = (e.target as HTMLElement).closest(".pl") as HTMLElement | null;
-      if (t && !t.classList.contains("odhaja")) this.naKlik(Number(t.dataset.i));
+      if (t && !t.classList.contains("odhaja")) { e.preventDefault(); this.naKlik(Number(t.dataset.i)); }
     };
   }
 

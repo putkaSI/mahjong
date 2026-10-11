@@ -3,7 +3,7 @@ const b = await webkit.launch();
 const ctx = await b.newContext(devices["iPhone 15"]);
 const p = await ctx.newPage();
 const napake = []; p.on("pageerror", e => napake.push(String(e))); p.on("console", m => m.type() === "error" && napake.push(m.text()));
-await p.goto("https://putkasi.github.io/mahjong/?ime=Test"); await p.waitForTimeout(2500);
+await p.goto((process.argv[2] ?? "https://putkasi.github.io/mahjong/") + "?ime=Test"); await p.waitForTimeout(2500);
 await p.screenshot({ path: "orodja/posnetki/iphone-domov.png" });
 await p.click("#d-proste"); await p.waitForTimeout(500);
 await p.click(".oblika >> nth=0"); await p.click(".pogovor .gumb.glavni"); await p.waitForTimeout(2000);

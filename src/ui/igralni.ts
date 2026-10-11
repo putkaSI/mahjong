@@ -129,8 +129,12 @@ function klik(i: number): void {
     if (iz.konec) zmaga();
     else if (iz.brezPotez) setTimeout(ponudiMesanje, 1300);
   }
-  osvezi(); shrani();
+  osvezi(); shraniPozneje();
 }
+
+/** Shrani šele po izrisu, da shranjevanje ne zadržuje odziva na dotik. */
+let shrT = 0;
+function shraniPozneje(): void { clearTimeout(shrT); shrT = window.setTimeout(shrani, 120); }
 
 function namig(): void {
   if (!igra || !plosca) return;
