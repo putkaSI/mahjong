@@ -5,7 +5,7 @@ import { postavitev, postavitveZa } from "../igra/oblike";
 import { KRAJI, kraj } from "../kraji";
 import { S, shrani, jeMobilnaNaprava } from "../shramba";
 
-/** Na telefonu ima vsaka igra toliko namigov (ob novi igri ali po zaprtju se ponastavijo). */
+/** Vsaka igra ima toliko namigov; ob novi igri ali ponovnem začetku se ponastavijo. */
 const NAMIGI_NA_IGRO = 3;
 import { nastaviOzadje, samodejnoOzadje, cvetniDez } from "../ozadje";
 import { zvokPar, zvokZmaga, preklopiGlasbo } from "../zvok";
@@ -57,12 +57,16 @@ function zacni2(z0: Zacetek, tez: Tezavnost, seme?: number): void {
   const p = postavitev(z.postavitevId)!;
   const sir = Math.max(...p.polozaji.map(q => q.x)), vis = Math.max(...p.polozaji.map(q => q.y)) * 1.3;
   const transponirano = innerHeight > innerWidth * 1.15 && sir > vis;
-  const g = Igra.nova({ ...z, tez, transponirano, seme, namigi: jeMobilnaNaprava() ? NAMIGI_NA_IGRO : undefined });
+  const g = Igra.nova({ ...z, tez, transponirano, seme, namigi: NAMIGI_NA_IGRO });
   S.igra = g.st; S.napredek.tezavnost = tez; S.napredek.krog++; shrani();
   prikazi(g);
 }
 
-export function nadaljuj(): void { if (S.igra) prikazi(Igra.izShrambe(S.igra)); else nav.domov(); }
+export function nadaljuj(): void {
+  if (!S.igra) { nav.domov(); return; }
+  S.igra.namigi ??= NAMIGI_NA_IGRO; // igre, začete pred namigi na igro, jih dobijo zdaj
+  prikazi(Igra.izShrambe(S.igra));
+}
 
 function oznakaKraja(g: Igra): string {
   const k = g.st.krajId ? kraj(g.st.krajId) : null;

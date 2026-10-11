@@ -9,7 +9,7 @@ export type ShranjenaIgra = {
   tez: Tezavnost; seme: number; transponirano: boolean;
   vrste: string[]; na: boolean[]; tocke: number; cas: number;
   mesanja: number; namigiUporabljeni: number; izbrana: number;
-  namigi?: number;   // na telefonu ima vsaka igra svoje namige (ob novi igri se ponastavijo)
+  namigi?: number;   // vsaka igra ima svoje namige (ob novi igri ali ponovnem začetku se ponastavijo)
 };
 
 export const MESANJA: Record<Tezavnost, number> = { lahka: 4, srednja: 3, zahtevna: 2 };

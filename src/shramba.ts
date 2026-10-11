@@ -10,6 +10,7 @@ export type Nastavitve = {
   ozadje: string;                     // "samodejno" ali id slike
   gibanje: boolean; pomoc: boolean; mehko: boolean;
   slogPloscic: SlogPloscic;
+  velikostPloscic: number;              // na računalniku: delež velikosti »čez cel zaslon«
 };
 export type Napredek = {
   resitve: Record<string, number>;      // postavitev -> kolikokrat rešena
@@ -20,7 +21,7 @@ type Vse = { nastavitve: Nastavitve; napredek: Napredek; igra: ShranjenaIgra | n
 
 const KLJUC = "mahjong-v1";
 const PRIVZETO: Vse = {
-  nastavitve: { ime: "", rojstniDan: "", zvok: true, glasba: "brez", zadnjaGlasba: "glasba", glasnost: .6, ozadje: "samodejno", gibanje: true, pomoc: false, mehko: false, slogPloscic: "klasicen" },
+  nastavitve: { ime: "", rojstniDan: "", zvok: true, glasba: "brez", zadnjaGlasba: "glasba", glasnost: .6, ozadje: "samodejno", gibanje: true, pomoc: false, mehko: false, slogPloscic: "klasicen", velikostPloscic: .5 },
   napredek: { resitve: {}, potovanje: {}, namigi: 3, tezavnost: "srednja", krog: 0 },
   igra: null,
 };

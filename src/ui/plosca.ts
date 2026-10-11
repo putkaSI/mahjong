@@ -1,7 +1,7 @@
 // Izris mize: ploščice kot elementi z rahlim 3D robom, prilagajanje velikosti zaslonu in animacije.
 import type { Igra } from "../igra/stanje";
 import { VRSTE, imaOznake, liceHTML } from "../art/ploscice";
-import { S } from "../shramba";
+import { S, jeMobilnaNaprava } from "../shramba";
 
 const W = 60, H = 78, DX = -5, DY = -6;   // velikost ploščice in zamik višje plasti (gor-levo)
 const POMOC: Record<string, string> = Object.fromEntries(VRSTE.map(v => [v.id, v.pomoc]));
@@ -59,7 +59,9 @@ export class Plosca {
   /** Miza naj zapolni prostor, a ploščice naj ne bodo prevelike. */
   prilagodi(): void {
     const r = this.okvir.getBoundingClientRect(), rob = r.width < 600 ? 6 : 24;
-    const k = Math.min((r.width - rob) / this.sirina, (r.height - rob) / this.visina, 1.9);
+    const cez = Math.min((r.width - rob) / this.sirina, (r.height - rob) / this.visina, 1.9);
+    // na računalniku ploščice po izbiri v nastavitvah (privzeto pol velikosti zaslona), a nikoli ožje od ~46 px
+    const k = jeMobilnaNaprava() ? cez : Math.max(cez * S.nastavitve.velikostPloscic, Math.min(cez, .77));
     const x = (r.width - this.sirina * k) / 2, y = (r.height - this.visina * k) / 2;
     this.el.style.transform = `translate(${x}px, ${y}px) scale(${k})`;
   }

@@ -242,6 +242,8 @@ export function risba(id: string, slog: SlogPloscic = "klasicen"): string {
 }
 /** Ali slog že sam nariše številke in črke (potem pomožnih oznak ne dodajamo). */
 export const imaOznake = (slog: SlogPloscic) => TEME[slog]?.razlocno ?? false;
+/** Razlaga dela kompleta za pomoč, če jo slog ima (sicer klasična). */
+export const razlaga = (slog: SlogPloscic, del: "p" | "b" | "z" | "v" | "d" | "r" | "c") => TEME[slog]?.besedila?.[del];
 
 /** Skriti SVG z vsemi risbami kot <symbol>, da jih ploščice uporabijo z <use>. Ob menjavi sloga se zamenja. */
 export function vstaviSimbole(slog: SlogPloscic = "klasicen"): void {

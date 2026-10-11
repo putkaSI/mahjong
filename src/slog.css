@@ -95,6 +95,18 @@ body[data-mehko="true"] .tonacija { background: radial-gradient(ellipse at cente
   --pl-a: #ffffff; --pl-b: #fafbfc; --pl-c: #f1f3f6; --pl-s1: #e6e9ef; --pl-s2: #dadfe7; --pl-s3: #ccd2dd;
   --pl-r1: #a3acbd; --pl-r2: #8f98aa; --pl-r3: #7a8396; --pl-zaobljenost: 11px;
 }
+[data-slog="vrt"] {
+  --pl-a: #fffdf7; --pl-b: #fbf6ea; --pl-c: #f3ecda; --pl-s1: #e3ecd9; --pl-s2: #d3e0c6; --pl-s3: #bfd0ae;
+  --pl-r1: #7fa878; --pl-r2: #6a9464; --pl-r3: #557d50; --pl-zaobljenost: 9px;
+}
+[data-slog="morje"] {
+  --pl-a: #fefcf7; --pl-b: #f8f4ea; --pl-c: #efe8d8; --pl-s1: #dcebee; --pl-s2: #c9dfe4; --pl-s3: #b3d0d7;
+  --pl-r1: #4f9fb0; --pl-r2: #3f8b9c; --pl-r3: #317584; --pl-zaobljenost: 9px;
+}
+[data-slog="deco"] {
+  --pl-a: #fffcf4; --pl-b: #faf4e4; --pl-c: #f1e8d0; --pl-s1: #e9d7a6; --pl-s2: #dcc58b; --pl-s3: #c9ad6c;
+  --pl-r1: #2b3a62; --pl-r2: #223052; --pl-r3: #1a2543; --pl-zaobljenost: 4px;
+}
 /* slogi s slikami (umetna inteligenca) */
 [data-slog="starinski"] { --pl-a: #e3a652; --pl-b: #d6933d; --pl-c: #c6822f; --pl-s1: #c07a2c; --pl-s2: #ad6b26; --pl-s3: #985c20; --pl-r1: #6b3f1a; --pl-r2: #5a3415; --pl-r3: #4a2a10; }
 [data-slog="emajl"] { --pl-a: #f7f0e1; --pl-b: #efe5cf; --pl-c: #e6dabf; --pl-s1: #d9b45a; --pl-s2: #c39a40; --pl-s3: #a8822f; --pl-r1: #8a6524; --pl-r2: #74541e; --pl-r3: #5e4418; }
@@ -128,6 +140,8 @@ body[data-mehko="true"] .tonacija { background: radial-gradient(ellipse at cente
   50% { outline-width: 3px; filter: none; translate: 0 0; }
 }
 .pl.odhaja { pointer-events: none; }
+/* izbrana ploščica in namig se vedno izrišeta nad vsemi ostalimi */
+.pl.izbrana, .pl.namig { z-index: 90000 !important; }
 .pl-pomoc { position: absolute; left: 4px; top: 2px; font: 700 13px/1 var(--pisava); color: var(--rdeca); background: rgba(252, 246, 232, .9); border-radius: 4px; padding: 1px 2px; }
 .pl.mini { position: relative; display: inline-block; width: 46px; height: 60px; cursor: default; transform: none;
   box-shadow: inset 0 0 0 1px rgba(140, 105, 60, .25), 2px 2px 0 var(--pl-s2), 3px 4px 0 var(--pl-r1), 4px 5px 0 var(--pl-r3), 5px 8px 7px rgba(35, 20, 8, .28); }

@@ -1,6 +1,6 @@
 // Nastavitve in pomoč.
 import { S, shrani, jeMobilnaNaprava, type Glasba } from "../shramba";
-import { VRSTE, SLOGI_PLOSCIC, vstaviSimbole, liceHTML, liceSamostojno, type SlogPloscic } from "../art/ploscice";
+import { VRSTE, SLOGI_PLOSCIC, vstaviSimbole, liceHTML, liceSamostojno, razlaga, type SlogPloscic } from "../art/ploscice";
 import { KRAJI } from "../kraji";
 import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje, osveziDelce } from "../ozadje";
 import { posodobiGlasbo, zvokPar, IZBIRE_GLASBE } from "../zvok";
@@ -37,6 +37,9 @@ export function nastavitve(nazaj: () => void): void {
         <b>${s.ime}</b><small>${s.opis}</small></label>`).join("")}</div>
     </section>
     <section><h2>Videz</h2>
+      ${jeMobilnaNaprava() ? "" : `<div class="nastavitev"><span><b>Velikost ploščic</b><small>Na računalniku; telefon jih vedno prilagodi zaslonu</small></span><div class="izbire" role="radiogroup">
+        ${([[.5, "Majhne"], [.7, "Srednje"], [.85, "Velike"], [1, "Čez cel zaslon"]] as [number, string][]).map(([v, t]) => `<label class="izbira"><input type="radio" name="velikost" value="${v}"${Math.abs(n.velikostPloscic - v) < .01 ? " checked" : ""}><span>${t}</span></label>`).join("")}
+      </div></div>`}
       ${stikalo("n-pomoc", "Pomožne oznake na ploščicah", "Majhna številka ali črka v kotu ploščice (V, J, Z, S za vetrove)", n.pomoc)}
       ${stikalo("n-mehko", "Mehkejše ozadje", "Ozadje je temnejše in manj bleščeče", n.mehko)}
       ${stikalo("n-gibanje", "Gibanje v ozadju", "Nežno padajoči listi, cvetni listi ali sneg", n.gibanje)}
@@ -60,6 +63,7 @@ export function nastavitve(nazaj: () => void): void {
     n.slogPloscic = r.value as SlogPloscic; shrani(); vstaviSimbole(n.slogPloscic);
   }));
   z.querySelector<HTMLInputElement>("#n-pomoc")!.addEventListener("change", e => { n.pomoc = (e.target as HTMLInputElement).checked; shrani(); });
+  z.querySelectorAll<HTMLInputElement>("input[name=velikost]").forEach(r => r.addEventListener("change", () => { n.velikostPloscic = Number(r.value); shrani(); }));
   z.querySelector<HTMLInputElement>("#n-mehko")!.addEventListener("change", e => { n.mehko = (e.target as HTMLInputElement).checked; posodobi(); document.body.dataset.mehko = String(n.mehko); });
   z.querySelector<HTMLInputElement>("#n-gibanje")!.addEventListener("change", e => { n.gibanje = (e.target as HTMLInputElement).checked; shrani(); osveziDelce(); });
   z.querySelectorAll<HTMLInputElement>("input[name=ozadje]").forEach(r => r.addEventListener("change", () => { n.ozadje = r.value; posodobi(); }));
@@ -72,20 +76,21 @@ export function pomoc(nazaj: () => void): void {
     return `<figure><span class="pl mini">${liceHTML(id, S.nastavitve.slogPloscic)}</span><figcaption>${v.ime.replace(/^.*?: /, "")}</figcaption></figure>`;
   }).join("")}</div></section>`;
   const r = (p: string) => Array.from({ length: 9 }, (_, i) => `${p}${i + 1}`);
+  const raz = (del: Parameters<typeof razlaga>[1]) => razlaga(S.nastavitve.slogPloscic, del);
   const z = zaslon("zaslon-seznam zaslon-pomoc", glava("Pomoč") + `<div class="pomoc">
     <section><h2>Kako se igra</h2>
       <p>Poišči dve enaki ploščici in klikni najprej eno, nato drugo. Par odleti z mize. Igra je rešena, ko pospraviš vse ploščice.</p>
       <p>Vzameš lahko samo <b>prosto</b> ploščico: na njej ne sme ležati nobena druga, prosta pa mora biti vsaj na levi ali na desni strani.</p>
-      <p><b>Namig</b> pokaže en prost par in vzame 15 točk. ${mobilno ? "Vsaka igra ima 3 namige." : "Za vsako rešeno igro dobiš nov namig."}
+      <p><b>Namig</b> pokaže en prost par in vzame 15 točk. Vsaka igra ima 3 namige; ob novi igri ali ponovnem začetku jih spet dobiš.
       <b>Premešaj</b> premeša ploščice, ki so še na mizi, in vzame 25 točk. Za vsak par dobiš 10 točk, za rešeno igro še 100, in 50 več, če nisi mešala.</p>
       <p>${mobilno ? "Če za hip odpreš drugo aplikacijo, igra počaka. Ko aplikacijo zapreš, se naslednjič začne na začetnem zaslonu." : "Igra se sproti shranjuje. Ko jo znova odpreš, nadaljuješ tam, kjer si ostala."}</p></section>
-    ${sk("Pike", "Šteješ kroge.", r("p"))}
-    ${sk("Bambus", "Šteješ palčke. Ena sama je ptič.", r("b"))}
-    ${sk("Znaki", "Zgoraj je kitajska številka, spodaj rdeči znak 萬.", r("z"))}
-    ${sk("Vetrovi", "Vzhod, jug, zahod in sever.", ["vV", "vJ", "vZ", "vS"])}
-    ${sk("Zmaji", "Rdeči, zeleni in beli.", ["dR", "dG", "dB"])}
-    ${sk("Rože", "Rdeč okvir. <b>Katera koli roža se ujema s katero koli rožo.</b>", ["r1", "r2", "r3", "r4"])}
-    ${sk("Letni časi", "Modrozelen okvir. <b>Kateri koli letni čas se ujema s katerim koli letnim časom.</b>", ["c1", "c2", "c3", "c4"])}
+    ${sk("Pike", raz("p") ?? "Šteješ kroge.", r("p"))}
+    ${sk("Bambus", raz("b") ?? "Šteješ palčke. Ena sama je ptič.", r("b"))}
+    ${sk("Znaki", raz("z") ?? "Zgoraj je kitajska številka, spodaj rdeči znak 萬.", r("z"))}
+    ${sk("Vetrovi", `Vzhod, jug, zahod in sever.${raz("v") ? " " + raz("v") : ""}`, ["vV", "vJ", "vZ", "vS"])}
+    ${sk("Zmaji", raz("d") ?? "Rdeči, zeleni in beli.", ["dR", "dG", "dB"])}
+    ${sk("Rože", `${raz("r") ?? "Rdeč okvir."} <b>Katera koli roža se ujema s katero koli rožo.</b>`, ["r1", "r2", "r3", "r4"])}
+    ${sk("Letni časi", `${raz("c") ?? "Modrozelen okvir."} <b>Kateri koli letni čas se ujema s katerim koli letnim časom.</b>`, ["c1", "c2", "c3", "c4"])}
   </div>`);
   z.querySelector("#nazaj")!.addEventListener("click", nazaj);
 }

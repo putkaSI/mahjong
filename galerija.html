@@ -16,8 +16,10 @@
   <script type="module">
     import "./src/slog.css";
     import "@fontsource/source-sans-3/latin-700.css";
+    import "@fontsource/dm-serif-display/latin-400.css";
     import { VRSTE, SLOGI_PLOSCIC, liceSamostojno } from "./src/art/ploscice.ts";
     document.body.style.overflow = "auto";
+    const zoom = new URLSearchParams(location.search).get("zoom"); if (zoom) document.body.style.zoom = zoom;
     const g = document.getElementById("g");
     const izbor = new URLSearchParams(location.search).get("slogi")?.split(",");
     for (const s of SLOGI_PLOSCIC) {

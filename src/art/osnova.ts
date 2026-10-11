@@ -20,6 +20,7 @@ export type Tema = {
   roza?: (n: number) => string;
   letniCas?: (n: number) => string;
   okras?: () => string;                // okras, ki se nariše na vsako ploščico
+  besedila?: Partial<Record<"p" | "b" | "z" | "v" | "d" | "r" | "c", string>>; // razlage za pomoč, kjer se risbe razlikujejo od klasičnih
 };
 
 /** Trenutna tema (nastavi jo risba()). */

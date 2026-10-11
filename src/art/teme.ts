@@ -1,8 +1,9 @@
 // Slogi ploščic. Vsak ima svojo paleto, nekateri pa tudi svoje risbe pik, palic, znakov, vetrov, zmajev in rož.
 import { A, mesaj, odtenek, svetlost, temnejsa, svetlejsa, znak, napis, type Tema, type Odtenek } from "./osnova";
+import { TEME_NOVE, ZNACKE } from "./teme-nove";
 
 export type SlogPloscic = "klasicen" | "razlocen" | "zad" | "dragulji" | "porcelan" | "lak" | "tus" | "sodoben"
-  | "starinski" | "emajl" | "poslikan" | "intarzija" | "zadrez";
+  | "vrt" | "morje" | "deco" | "starinski" | "emajl" | "poslikan" | "intarzija" | "zadrez";
 
 /** Slogi, katerih lica je naslikala umetna inteligenca (slike v public/ploscice/<slog>/<id>.webp). */
 export const SLIKOVNI: Partial<Record<SlogPloscic, { ime: string; opis: string }>> = {
@@ -142,6 +143,7 @@ const SODOBEN: Tema = {
   id: "sodoben", ime: "Sodoben", opis: "Ploske barvne oblike, velike številke in kompas za vetrove",
   iv: "#ffffff", rdeca: SOD.kor, zelena: SOD.tur, modra: SOD.ind, crnilo: SOD.sivo, zlata: SOD.rum, vej: "#6b7280",
   okvirRoza: SOD.kor, okvirCas: SOD.tur, debelo: 0, razlocno: true, zlato: false,
+  besedila: { ...ZNACKE, z: "Velika številka nad rdečim znakom 萬.", d: "Rdeči in zeleni znak ter prazen okvir." },
   barva: poOdtenku({ rdeca: SOD.kor, oranzna: SOD.jan, rumena: SOD.rum, zelena: SOD.tur, modra: SOD.ind, vijolicna: SOD.vij, temna: SOD.sivo, svetla: "#ffffff" }),
   kovanec: (cx, cy, r, c) => krog(cx, cy, r * .9, c),
   pika1: () => krog(50, 64, 36, SOD.kor) + krog(50, 64, 24, "#ffffff") + krog(50, 64, 13, SOD.ind),
@@ -197,6 +199,6 @@ const ZAD: Tema = { ...KLASICEN, id: "zad", ime: "Žad", opis: "Tradicionalne pl
 
 const slikovna = (id: SlogPloscic): Tema => ({ ...KLASICEN, id, ime: SLIKOVNI[id]!.ime, opis: SLIKOVNI[id]!.opis });
 export const TEME: Record<SlogPloscic, Tema> = {
-  klasicen: KLASICEN, razlocen: RAZLOCEN, zad: ZAD, dragulji: DRAGULJI, porcelan: PORCELAN, lak: LAK, tus: TUS, sodoben: SODOBEN,
+  klasicen: KLASICEN, razlocen: RAZLOCEN, zad: ZAD, dragulji: DRAGULJI, porcelan: PORCELAN, lak: LAK, tus: TUS, sodoben: SODOBEN, ...TEME_NOVE,
   starinski: slikovna("starinski"), emajl: slikovna("emajl"), poslikan: slikovna("poslikan"), intarzija: slikovna("intarzija"), zadrez: slikovna("zadrez"),
 };
