@@ -7,10 +7,11 @@ import type { Postavitev } from "../igra/postavitve";
 import { nastaviOzadje, samodejnoOzadje } from "../ozadje";
 import { IKONE, pogovor } from "./pogovor";
 import { preklopiGlasbo } from "../zvok";
+import { liceHTML } from "../art/ploscice";
 import { nav, zaslon, jeTelefon } from "./nav";
 import { zacniNovo, naslednjaStopnja, nakljucnaPostavitev, razglednica, zaNapravo } from "./igralni";
 
-const mini = (id: string) => `<span class="pl mini"><svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${id}"/></svg></span>`;
+const mini = (id: string) => `<span class="pl mini">${liceHTML(id, S.nastavitve.slogPloscic)}</span>`;
 const glava = (naslov: string, podnaslov = "") => `<header class="glava"><button class="gumb nazaj" id="nazaj">${IKONE.domov}<span>Domov</span></button>
   <div><h1>${naslov}</h1>${podnaslov ? `<p>${podnaslov}</p>` : ""}</div></header>`;
 

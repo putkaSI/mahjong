@@ -1,6 +1,6 @@
 // Izris mize: ploščice kot elementi z rahlim 3D robom, prilagajanje velikosti zaslonu in animacije.
 import type { Igra } from "../igra/stanje";
-import { VRSTE, imaOznake } from "../art/ploscice";
+import { VRSTE, imaOznake, liceHTML } from "../art/ploscice";
 import { S } from "../shramba";
 
 const W = 60, H = 78, DX = -5, DY = -6;   // velikost ploščice in zamik višje plasti (gor-levo)
@@ -51,7 +51,7 @@ export class Plosca {
 
   private vsebina(vrsta: string): string {
     const p = S.nastavitve.pomoc && POMOC[vrsta] && !imaOznake(S.nastavitve.slogPloscic) ? `<span class="pl-pomoc">${POMOC[vrsta]}</span>` : "";
-    return `<svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${vrsta}"/></svg>${p}`;
+    return liceHTML(vrsta, S.nastavitve.slogPloscic) + p;
   }
 
   /** Miza naj zapolni prostor, a ploščice naj ne bodo prevelike. */

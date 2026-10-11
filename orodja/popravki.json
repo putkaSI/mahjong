@@ -1,0 +1,19 @@
+{
+  "_opis": "Popravki AI ploščic po slogih: 'barva' prebarva modri emajl simbola v pravo barvo, 'kot' preriše znak v zgornjem desnem kotu iz izvorne risbe, 'izbira' pove, katero kandidatno sliko (seme) uporabiti.",
+  "cloisonne": {
+    "izbira": { "dR": "k55", "dG": "k66", "dB": "k66", "c4": "k66" },
+    "barva": { "dR": "#b42a22", "dG": "#1d7a44" },
+    "kot": ["c4"],
+    "iz_risbe": ["dB"]
+  },
+  "intarzija": {
+    "izbira": { "b4": "k55", "b8": "k55" }
+  },
+  "zad": {
+    "izbira": { "b5": "k55", "b7": "k77", "b8": "k55" }
+  },
+  "porcelan": {
+    "izbira": { "b2": "k55", "vS": "k55" },
+    "kot": ["c4"]
+  }
+}

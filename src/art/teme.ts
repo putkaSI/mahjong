@@ -1,7 +1,18 @@
 // Slogi ploščic. Vsak ima svojo paleto, nekateri pa tudi svoje risbe pik, palic, znakov, vetrov, zmajev in rož.
 import { A, mesaj, odtenek, svetlost, temnejsa, svetlejsa, znak, napis, type Tema, type Odtenek } from "./osnova";
 
-export type SlogPloscic = "klasicen" | "razlocen" | "zad" | "dragulji" | "porcelan" | "lak" | "tus" | "sodoben";
+export type SlogPloscic = "klasicen" | "razlocen" | "zad" | "dragulji" | "porcelan" | "lak" | "tus" | "sodoben"
+  | "starinski" | "emajl" | "poslikan" | "intarzija" | "zadrez";
+
+/** Slogi, katerih lica je naslikala umetna inteligenca (slike v public/ploscice/<slog>/<id>.webp). */
+export const SLIKOVNI: Partial<Record<SlogPloscic, { ime: string; opis: string }>> = {
+  starinski: { ime: "Starinski", opis: "Starinske ploščice iz bakelita z vgraviranimi, ročno pobarvanimi znaki" },
+  emajl: { ime: "Emajl", opis: "Kitajski emajl: zlate žičke, zapolnjene z barvnim steklenim emajlom" },
+  poslikan: { ime: "Poslikan porcelan", opis: "Ročno poslikan modro-beli porcelan z leskom glazure" },
+  intarzija: { ime: "Intarzija", opis: "Temen palisander z vložki iz bisernice" },
+  zadrez: { ime: "Rezljan žad", opis: "Polirana ploščica iz zelenega žada z zlatimi vložki" },
+};
+export const jeSlikovni = (s: string) => s in SLIKOVNI;
 const poOdtenku = (m: Partial<Record<Odtenek, string>>, sicer: (c: string) => string = c => c) => (c: string) => m[odtenek(c)] ?? sicer(c);
 const f = (v: number) => v.toFixed(1);
 const krog = (cx: number, cy: number, r: number, fill: string, extra = "") => `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r)}" fill="${fill}"${extra}/>`;
@@ -184,6 +195,8 @@ const RAZLOCEN: Tema = { ...KLASICEN, id: "razlocen", ime: "Razločen", opis: "V
 const ZAD: Tema = { ...KLASICEN, id: "zad", ime: "Žad", opis: "Tradicionalne ploščice z zelenim hrbtom in zlatimi poudarki",
   iv: "#f2e8cc", rdeca: "#b2311c", zelena: "#1d6648", modra: "#203d78", crnilo: "#141b2e", zlata: "#b98a2c", debelo: 8, zlato: true };
 
+const slikovna = (id: SlogPloscic): Tema => ({ ...KLASICEN, id, ime: SLIKOVNI[id]!.ime, opis: SLIKOVNI[id]!.opis });
 export const TEME: Record<SlogPloscic, Tema> = {
   klasicen: KLASICEN, razlocen: RAZLOCEN, zad: ZAD, dragulji: DRAGULJI, porcelan: PORCELAN, lak: LAK, tus: TUS, sodoben: SODOBEN,
+  starinski: slikovna("starinski"), emajl: slikovna("emajl"), poslikan: slikovna("poslikan"), intarzija: slikovna("intarzija"), zadrez: slikovna("zadrez"),
 };

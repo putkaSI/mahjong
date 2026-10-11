@@ -16,7 +16,7 @@
   <script type="module">
     import "./src/slog.css";
     import "@fontsource/source-sans-3/latin-700.css";
-    import { VRSTE, SLOGI_PLOSCIC, risba } from "./src/art/ploscice.ts";
+    import { VRSTE, SLOGI_PLOSCIC, liceSamostojno } from "./src/art/ploscice.ts";
     document.body.style.overflow = "auto";
     const g = document.getElementById("g");
     const izbor = new URLSearchParams(location.search).get("slogi")?.split(",");
@@ -24,7 +24,7 @@
       if (izbor && !izbor.includes(s.id)) continue;
       const sec = document.createElement("section");
       sec.dataset.slog = s.id;
-      sec.innerHTML = `<h2>${s.ime}</h2><div class="vrsta">${VRSTE.map(v => `<span class="pl"><svg class="pl-lice" viewBox="0 0 100 128">${risba(v.id, s.id)}</svg></span>`).join("")}</div>`;
+      sec.innerHTML = `<h2>${s.ime}</h2><div class="vrsta">${VRSTE.map(v => `<span class="pl">${liceSamostojno(v.id, s.id)}</span>`).join("")}</div>`;
       g.appendChild(sec);
     }
   </script>

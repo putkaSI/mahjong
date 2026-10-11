@@ -91,6 +91,16 @@ body[data-mehko="true"] .ozadje-plast { filter: saturate(.85) brightness(.8) sep
   --pl-a: #ffffff; --pl-b: #fafbfc; --pl-c: #f1f3f6; --pl-s1: #e6e9ef; --pl-s2: #dadfe7; --pl-s3: #ccd2dd;
   --pl-r1: #a3acbd; --pl-r2: #8f98aa; --pl-r3: #7a8396; --pl-zaobljenost: 11px;
 }
+/* slogi s slikami (umetna inteligenca) */
+[data-slog="starinski"] { --pl-a: #e3a652; --pl-b: #d6933d; --pl-c: #c6822f; --pl-s1: #c07a2c; --pl-s2: #ad6b26; --pl-s3: #985c20; --pl-r1: #6b3f1a; --pl-r2: #5a3415; --pl-r3: #4a2a10; }
+[data-slog="emajl"] { --pl-a: #f7f0e1; --pl-b: #efe5cf; --pl-c: #e6dabf; --pl-s1: #d9b45a; --pl-s2: #c39a40; --pl-s3: #a8822f; --pl-r1: #8a6524; --pl-r2: #74541e; --pl-r3: #5e4418; }
+[data-slog="poslikan"] { --pl-a: #fdfdfe; --pl-b: #f2f4f8; --pl-c: #e7ebf1; --pl-s1: #e1e6ee; --pl-s2: #d3dae5; --pl-s3: #c3ccda; --pl-r1: #3d66ad; --pl-r2: #2f5596; --pl-r3: #22457e; }
+[data-slog="intarzija"] { --pl-a: #6a2418; --pl-b: #5a1d14; --pl-c: #4a170f; --pl-s1: #c9a45c; --pl-s2: #b08d48; --pl-s3: #93733a; --pl-r1: #3a120b; --pl-r2: #2b0d08; --pl-r3: #1e0905; }
+[data-slog="zadrez"] { --pl-a: #44a062; --pl-b: #318c4f; --pl-c: #247b42; --pl-s1: #d9b45a; --pl-s2: #c39a40; --pl-s3: #a8822f; --pl-r1: #1d5a36; --pl-r2: #174a2c; --pl-r3: #113a22; }
+.pl-slika { position: absolute; left: 3px; top: 3px; width: 54px; height: 72px; border-radius: 5px; object-fit: cover; pointer-events: none; }
+.pl.mini .pl-slika { left: 2px; top: 2px; width: 42px; height: 56px; border-radius: 4px; }
+/* izbrana ploščica s sliko: rumen nadih čez sliko */
+.pl.izbrana:has(.pl-slika)::after { content: ""; position: absolute; inset: 3px; border-radius: 5px; background: rgba(255, 214, 90, .3); pointer-events: none; }
 .zaslon-igra, .pl { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .plosca-okvir { touch-action: manipulation; }
 .pl { position: absolute; width: 60px; height: 78px; border-radius: var(--pl-zaobljenost, 7px); cursor: pointer;

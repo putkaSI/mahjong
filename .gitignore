@@ -6,3 +6,9 @@ orodja/zvok-surovo/
 orodja/slike-log.txt
 orodja/dnevna-ozadja.log
 *.local
+
+orodja/ai/
+orodja/lica/
+orodja/comfy-izhod/
+orodja/ai-log.txt
+orodja/ozadja-log.txt

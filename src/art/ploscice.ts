@@ -1,9 +1,22 @@
 // Risbe sprednjih strani ploščic (SVG, viewBox 0 0 100 128). Osnovne risbe so klasične;
 // vsaka tema (teme.ts) jih prebarva ali zamenja s svojimi (dragulji, porcelan, lak, tuš, sodoben …).
 import { A, C, znak, oznaka, temnejsa } from "./osnova";
-import { TEME, type SlogPloscic } from "./teme";
+import { TEME, jeSlikovni, type SlogPloscic } from "./teme";
 
 export type { SlogPloscic };
+export { jeSlikovni };
+const BASE: string = (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
+
+/** HTML lica ploščice: risba iz skritega SVG ali slika (pri slogih, ki jih je naslikala umetna inteligenca). */
+export function liceHTML(id: string, slog: SlogPloscic): string {
+  return jeSlikovni(slog)
+    ? `<img class="pl-slika" src="${BASE}ploscice/${slog}/${id}.webp" alt="" draggable="false">`
+    : `<svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${id}"/></svg>`;
+}
+/** Samostojno lice za predogled (brez skritega SVG). */
+export function liceSamostojno(id: string, slog: SlogPloscic): string {
+  return jeSlikovni(slog) ? liceHTML(id, slog) : `<svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true">${risba(id, slog)}</svg>`;
+}
 export const SLOGI_PLOSCIC = Object.values(TEME).map(t => ({ id: t.id as SlogPloscic, ime: t.ime, opis: t.opis }));
 const T = () => A.T;
 

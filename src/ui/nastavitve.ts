@@ -1,6 +1,6 @@
 // Nastavitve in pomoč.
 import { S, shrani, jeMobilnaNaprava, type Glasba } from "../shramba";
-import { VRSTE, SLOGI_PLOSCIC, risba, vstaviSimbole, type SlogPloscic } from "../art/ploscice";
+import { VRSTE, SLOGI_PLOSCIC, vstaviSimbole, liceHTML, liceSamostojno, type SlogPloscic } from "../art/ploscice";
 import { KRAJI } from "../kraji";
 import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje } from "../ozadje";
 import { posodobiGlasbo, zvokPar, IZBIRE_GLASBE } from "../zvok";
@@ -33,7 +33,7 @@ export function nastavitve(nazaj: () => void): void {
     <section><h2>Ploščice</h2>
       <div class="slogi" role="radiogroup" aria-label="Slog ploščic">${SLOGI_PLOSCIC.map(s => `<label class="slog-izbira" data-slog="${s.id}">
         <input type="radio" name="slog" value="${s.id}"${n.slogPloscic === s.id ? " checked" : ""}>
-        <span class="slog-primeri">${["z5", "vV", "p3", "r2"].map(id => `<span class="pl mini"><svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true">${risba(id, s.id)}</svg></span>`).join("")}</span>
+        <span class="slog-primeri">${["z5", "vV", "p3", "r2"].map(id => `<span class="pl mini">${liceSamostojno(id, s.id)}</span>`).join("")}</span>
         <b>${s.ime}</b><small>${s.opis}</small></label>`).join("")}</div>
     </section>
     <section><h2>Videz</h2>
@@ -69,7 +69,7 @@ export function pomoc(nazaj: () => void): void {
   const mobilno = jeMobilnaNaprava();
   const sk = (naslov: string, opis: string, ids: string[]) => `<section><h2>${naslov}</h2><p>${opis}</p><div class="galerija">${ids.map(id => {
     const v = VRSTE.find(x => x.id === id)!;
-    return `<figure><span class="pl mini"><svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${id}"/></svg></span><figcaption>${v.ime.replace(/^.*?: /, "")}</figcaption></figure>`;
+    return `<figure><span class="pl mini">${liceHTML(id, S.nastavitve.slogPloscic)}</span><figcaption>${v.ime.replace(/^.*?: /, "")}</figcaption></figure>`;
   }).join("")}</div></section>`;
   const r = (p: string) => Array.from({ length: 9 }, (_, i) => `${p}${i + 1}`);
   const z = zaslon("zaslon-seznam zaslon-pomoc", glava("Pomoč") + `<div class="pomoc">
