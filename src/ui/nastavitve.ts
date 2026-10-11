@@ -1,5 +1,5 @@
 // Nastavitve in pomoč.
-import { S, shrani, type Glasba } from "../shramba";
+import { S, shrani, jeMobilnaNaprava, type Glasba } from "../shramba";
 import { VRSTE, SLOGI_PLOSCIC, risba, vstaviSimbole, type SlogPloscic } from "../art/ploscice";
 import { KRAJI } from "../kraji";
 import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje } from "../ozadje";
@@ -66,6 +66,7 @@ export function nastavitve(nazaj: () => void): void {
 }
 
 export function pomoc(nazaj: () => void): void {
+  const mobilno = jeMobilnaNaprava();
   const sk = (naslov: string, opis: string, ids: string[]) => `<section><h2>${naslov}</h2><p>${opis}</p><div class="galerija">${ids.map(id => {
     const v = VRSTE.find(x => x.id === id)!;
     return `<figure><span class="pl mini"><svg class="pl-lice" viewBox="0 0 100 128" aria-hidden="true"><use href="#t-${id}"/></svg></span><figcaption>${v.ime.replace(/^.*?: /, "")}</figcaption></figure>`;
@@ -75,9 +76,9 @@ export function pomoc(nazaj: () => void): void {
     <section><h2>Kako se igra</h2>
       <p>Poišči dve enaki ploščici in klikni najprej eno, nato drugo. Par odleti z mize. Igra je rešena, ko pospraviš vse ploščice.</p>
       <p>Vzameš lahko samo <b>prosto</b> ploščico: na njej ne sme ležati nobena druga, prosta pa mora biti vsaj na levi ali na desni strani.</p>
-      <p><b>Namig</b> pokaže en prost par in vzame 15 točk. Za vsako rešeno igro dobiš nov namig.
+      <p><b>Namig</b> pokaže en prost par in vzame 15 točk. ${mobilno ? "Vsaka igra ima 3 namige." : "Za vsako rešeno igro dobiš nov namig."}
       <b>Premešaj</b> premeša ploščice, ki so še na mizi, in vzame 25 točk. Za vsak par dobiš 10 točk, za rešeno igro še 100, in 50 več, če nisi mešala.</p>
-      <p>Igra se sproti shranjuje. Ko jo znova odpreš, nadaljuješ tam, kjer si ostala.</p></section>
+      <p>${mobilno ? "Če za hip odpreš drugo aplikacijo, igra počaka. Ko aplikacijo zapreš, se naslednjič začne na začetnem zaslonu." : "Igra se sproti shranjuje. Ko jo znova odpreš, nadaljuješ tam, kjer si ostala."}</p></section>
     ${sk("Pike", "Šteješ kroge.", r("p"))}
     ${sk("Bambus", "Šteješ palčke. Ena sama je ptič.", r("b"))}
     ${sk("Znaki", "Zgoraj je kitajska številka, spodaj rdeči znak 萬.", r("z"))}

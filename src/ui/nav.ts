@@ -1,4 +1,5 @@
 // Premikanje med zasloni (izpolni main.ts, da se moduli ne uvažajo krožno).
+import { jeMobilnaNaprava } from "../shramba";
 export type Nav = {
   domov(): void; potovanje(): void; postavitve(): void;
   nastavitve(nazaj: () => void): void; pomoc(nazaj: () => void): void; nadaljuj(): void;
@@ -11,8 +12,8 @@ export function zaslon(razred: string, html: string): HTMLElement {
   return z;
 }
 
-/** Pokončen telefon: uporabljamo ozke postavitve z večjimi ploščicami. */
-export const jeTelefon = () => Math.min(innerWidth, innerHeight) < 600 && innerHeight > innerWidth;
+/** Pokončen telefon: ozke postavitve z večjimi ploščicami. Na računalniku vedno široke, tudi v ozkem oknu. */
+export const jeTelefon = () => jeMobilnaNaprava() && innerHeight >= innerWidth;
 
 export const fmtCas =(s: number) => {
   const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, ss = String(s % 60).padStart(2, "0");

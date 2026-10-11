@@ -30,7 +30,8 @@ async function igraj(p: Page, ime: string, oblika = 0) {
 const pc = await b.newPage({ viewport: { width: 1366, height: 768 } });
 pc.on("pageerror", e => napake.push(String(e)));
 await pc.goto(url); await pc.waitForTimeout(800);
-for (const s of ["klasicen", "razlocen", "zad"]) { await nastavi(pc, s); await igraj(pc, `slog-${s}`); }
+const slogi = (process.argv[3] ?? "klasicen,razlocen,zad,dragulji,porcelan,lak,tus,sodoben").split(",");
+for (const s of slogi) { await nastavi(pc, s); await igraj(pc, `slog-${s}`); }
 await nastavi(pc, "klasicen");
 await pc.click("#d-nast"); await pc.waitForTimeout(600);
 await pc.locator("section:has(h2:has-text('Ploščice'))").screenshot({ path: "orodja/posnetki/slogi-nastavitve.png" });

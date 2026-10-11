@@ -25,20 +25,36 @@ const PRIVZETO: Vse = {
   igra: null,
 };
 
+/** Telefon (dotik in majhen zaslon naprave, ne glede na velikost okna). */
+export function jeMobilnaNaprava(): boolean {
+  try { return matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 700; } catch { return false; }
+}
+// Na telefonu se začeta igra hrani samo do popolnega zaprtja aplikacije (mamina želja);
+// ob hitrem preklopu na drugo aplikacijo ostane. Na računalniku se hrani trajno.
+const KLJUC_SEJA = "mahjong-v1-igra";
+const MOBILNO = jeMobilnaNaprava();
+
 function preberi(): Vse {
+  let igraSeje: ShranjenaIgra | null = null;
+  try { igraSeje = JSON.parse(sessionStorage.getItem(KLJUC_SEJA) || "null"); } catch { /* ni seje */ }
   try {
     const d = JSON.parse(localStorage.getItem(KLJUC) || "null");
-    if (d) return { nastavitve: { ...PRIVZETO.nastavitve, slogPloscic: privzetiSlog(), ...d.nastavitve }, napredek: { ...PRIVZETO.napredek, ...d.napredek }, igra: d.igra ?? null };
+    if (d) return { nastavitve: { ...PRIVZETO.nastavitve, slogPloscic: privzetiSlog(), ...d.nastavitve }, napredek: { ...PRIVZETO.napredek, ...d.napredek }, igra: MOBILNO ? igraSeje : d.igra ?? null };
   } catch { /* prazna shramba */ }
-  const v = structuredClone(PRIVZETO); v.nastavitve.slogPloscic = privzetiSlog();
+  const v = structuredClone(PRIVZETO); v.nastavitve.slogPloscic = privzetiSlog(); v.igra = MOBILNO ? igraSeje : null;
   return v;
 }
 /** Na telefonu so privzete razločne ploščice (branje brez očal), drugje klasične. */
-function privzetiSlog(): SlogPloscic {
-  try { return Math.min(innerWidth, innerHeight) < 600 ? "razlocen" : "klasicen"; } catch { return "klasicen"; }
-}
+function privzetiSlog(): SlogPloscic { return MOBILNO ? "razlocen" : "klasicen"; }
 export const S: Vse = preberi();
-export function shrani(): void { try { localStorage.setItem(KLJUC, JSON.stringify(S)); } catch { /* polna shramba */ } }
+export function shrani(): void {
+  try {
+    if (MOBILNO) {
+      sessionStorage.setItem(KLJUC_SEJA, JSON.stringify(S.igra));
+      localStorage.setItem(KLJUC, JSON.stringify({ ...S, igra: null }));
+    } else localStorage.setItem(KLJUC, JSON.stringify(S));
+  } catch { /* polna shramba */ }
+}
 
 /** Ime in rojstni dan lahko pridejo iz povezave (?ime=…&rd=dan.mesec), da nista zapisana v kodi. */
 export function preberiPovezavo(): void {

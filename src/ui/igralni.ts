@@ -3,7 +3,10 @@ import { Igra, type Nacin } from "../igra/stanje";
 import type { Tezavnost } from "../igra/pravila";
 import { postavitev, postavitveZa } from "../igra/oblike";
 import { KRAJI, kraj } from "../kraji";
-import { S, shrani } from "../shramba";
+import { S, shrani, jeMobilnaNaprava } from "../shramba";
+
+/** Na telefonu ima vsaka igra toliko namigov (ob novi igri ali po zaprtju se ponastavijo). */
+const NAMIGI_NA_IGRO = 3;
 import { nastaviOzadje, samodejnoOzadje, cvetniDez } from "../ozadje";
 import { zvokPar, zvokZmaga, preklopiGlasbo } from "../zvok";
 import { Plosca } from "./plosca";
@@ -54,7 +57,7 @@ function zacni2(z0: Zacetek, tez: Tezavnost, seme?: number): void {
   const p = postavitev(z.postavitevId)!;
   const sir = Math.max(...p.polozaji.map(q => q.x)), vis = Math.max(...p.polozaji.map(q => q.y)) * 1.3;
   const transponirano = innerHeight > innerWidth * 1.15 && sir > vis;
-  const g = Igra.nova({ ...z, tez, transponirano, seme });
+  const g = Igra.nova({ ...z, tez, transponirano, seme, namigi: jeMobilnaNaprava() ? NAMIGI_NA_IGRO : undefined });
   S.igra = g.st; S.napredek.tezavnost = tez; S.napredek.krog++; shrani();
   prikazi(g);
 }
@@ -110,7 +113,7 @@ function osvezi(): void {
   $("st-pl")!.textContent = String(igra.ostane);
   $("st-tocke")!.textContent = String(st.tocke);
   $("st-cas")!.textContent = fmtCas(st.cas);
-  $("z-namig")!.textContent = String(S.napredek.namigi);
+  $("z-namig")!.textContent = String(st.namigi ?? S.napredek.namigi);
   $("z-mesaj")!.textContent = String(st.mesanja);
 }
 
@@ -131,10 +134,12 @@ function klik(i: number): void {
 
 function namig(): void {
   if (!igra || !plosca) return;
-  if (S.napredek.namigi <= 0) { obvestilo("Namigov ni več. Za vsako rešeno igro dobiš novega."); return; }
+  const naIgro = igra.st.namigi != null;
+  if ((naIgro ? igra.st.namigi! : S.napredek.namigi) <= 0) { obvestilo(naIgro ? "V tej igri ni več namigov." : "Namigov ni več. Za vsako rešeno igro dobiš novega."); return; }
   const p = igra.namig();
   if (!p) { ponudiMesanje(); return; }
-  S.napredek.namigi--; plosca.namig(p[0], p[1]); osvezi(); shrani();
+  if (naIgro) igra.st.namigi!--; else S.napredek.namigi--;
+  plosca.namig(p[0], p[1]); osvezi(); shrani();
 }
 
 function premesaj(izPogovora: boolean): void {
@@ -169,7 +174,8 @@ function meni(): void {
   if (!igra) return;
   shrani();
   pogovor({
-    naslov: "Premor", besedilo: "Igra je shranjena. Kadar koli lahko nadaljuješ, kjer si ostala.", zapriObKliku: true, razred: "meni",
+    naslov: "Premor", zapriObKliku: true, razred: "meni",
+    besedilo: jeMobilnaNaprava() ? "Igra počaka, dokler se ne vrneš. Če aplikacijo zapreš, se naslednjič začne znova." : "Igra je shranjena. Kadar koli lahko nadaljuješ, kjer si ostala.",
     gumbi: [
       { tekst: "Nadaljuj igro", glavni: true, ikona: "igraj" },
       { tekst: S.nastavitve.glasba === "brez" ? "Vklopi glasbo" : "Izklopi glasbo", ikona: S.nastavitve.glasba === "brez" ? "glasba" : "brezGlasbe", akcija: () => { preklopiGlasbo(); meni(); } },
@@ -219,7 +225,7 @@ function zmaga(): void {
   const st = igra.st; clearInterval(tajmer);
   S.igra = null;
   S.napredek.resitve[st.postavitevId] = (S.napredek.resitve[st.postavitevId] ?? 0) + 1;
-  S.napredek.namigi = Math.min(9, S.napredek.namigi + 1);
+  if (st.namigi == null) S.napredek.namigi = Math.min(9, S.napredek.namigi + 1);
   let html = "", naslednja: Zacetek | null = null;
   if (st.nacin === "potovanje" && st.krajId) {
     const prej = S.napredek.potovanje[st.krajId] ?? 0;

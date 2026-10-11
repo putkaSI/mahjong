@@ -9,6 +9,7 @@ export type ShranjenaIgra = {
   tez: Tezavnost; seme: number; transponirano: boolean;
   vrste: string[]; na: boolean[]; tocke: number; cas: number;
   mesanja: number; namigiUporabljeni: number; izbrana: number;
+  namigi?: number;   // na telefonu ima vsaka igra svoje namige (ob novi igri se ponastavijo)
 };
 
 export const MESANJA: Record<Tezavnost, number> = { lahka: 4, srednja: 3, zahtevna: 2 };
@@ -31,9 +32,10 @@ export class Igra {
     this.st = st;
   }
 
-  static nova(o: { nacin: Nacin; postavitevId: string; krajId?: string; stopnja?: number; tez: Tezavnost; transponirano: boolean; seme?: number }): Igra {
+  static nova(o: { nacin: Nacin; postavitevId: string; krajId?: string; stopnja?: number; tez: Tezavnost; transponirano: boolean; seme?: number; namigi?: number }): Igra {
     const seme = o.seme ?? Math.floor(Math.random() * 2 ** 31);
     const g = new Igra({ ...o, seme, vrste: [], na: [], tocke: 0, cas: 0, mesanja: MESANJA[o.tez], namigiUporabljeni: 0, izbrana: -1 });
+    if (o.namigi == null) delete g.st.namigi;
     const na = g.pos.map(() => true);
     let vrste: string[] | null = null;
     for (let k = 0; !vrste && k < 5; k++) vrste = razdeli(g.pos, g.s, na, vsiPari(), o.tez, seme + k);
