@@ -19,14 +19,18 @@ h1, h2, h3 { font-family: var(--naslovi); font-weight: 400; margin: 0; color: #5
 /* ---------- ozadje ---------- */
 #ozadje { position: fixed; inset: 0; z-index: 0; background: linear-gradient(170deg, #f2e8d2, #dcc7a0 60%, #cdb48a); overflow: hidden; }
 #ozadje-slika, .ozadje-plast { position: absolute; inset: 0; }
-.ozadje-plast { background-size: cover; background-position: center; opacity: 0; transition: opacity 1.4s ease; filter: saturate(.92) brightness(.95) sepia(.06); }
+/* brez CSS filtrov na ozadju: grafični čip bi jih računal ob vsakem osveževanju zaslona (vroč telefon);
+   umiritev barv dela prosojna topla plast (.tonacija), ki je skoraj zastonj */
+.ozadje-plast { background-size: cover; background-position: center; opacity: 0; transition: opacity 1.4s ease; }
 .ozadje-plast.vidna { opacity: 1; }
-body[data-mehko="true"] .ozadje-plast { filter: saturate(.85) brightness(.8) sepia(.12); }
 .megla { position: absolute; inset: -25%; pointer-events: none; opacity: .55; animation: megla 90s linear infinite alternate; }
 .megla-1 { background: radial-gradient(40% 18% at 30% 60%, rgba(255, 250, 240, .55), transparent 70%), radial-gradient(30% 14% at 75% 40%, rgba(255, 250, 240, .45), transparent 70%); }
 .megla-2 { animation-duration: 140s; animation-direction: alternate-reverse; background: radial-gradient(35% 15% at 60% 75%, rgba(255, 248, 235, .4), transparent 70%), radial-gradient(28% 12% at 20% 30%, rgba(255, 248, 235, .35), transparent 70%); }
 @keyframes megla { from { transform: translateX(-6%); } to { transform: translateX(6%); } }
-.tonacija { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(70, 45, 20, .22)); }
+.tonacija { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(70, 45, 20, .22)), linear-gradient(rgba(120, 85, 40, .07), rgba(120, 85, 40, .07)); }
+body[data-mehko="true"] .tonacija { background: radial-gradient(ellipse at center, transparent 50%, rgba(50, 32, 14, .3)), linear-gradient(rgba(55, 38, 18, .24), rgba(55, 38, 18, .24)); }
+/* telefon: megla miruje (premikanje velikih plasti greje telefon) */
+@media (pointer: coarse) { .megla { animation: none; } }
 #delci { position: fixed; inset: 0; z-index: 1; pointer-events: none; width: 100%; height: 100%; }
 #zaslon { position: fixed; inset: 0; z-index: 2; overflow: auto; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
 
@@ -108,7 +112,7 @@ body[data-mehko="true"] .ozadje-plast { filter: saturate(.85) brightness(.8) sep
   box-shadow: inset 0 0 0 1px rgba(140, 105, 60, .25), inset 2px 2px 0 rgba(255, 255, 255, .6),
     1px 1px 0 var(--pl-s1), 2px 2px 0 var(--pl-s2), 3px 3px 0 var(--pl-s3), 4px 5px 0 var(--pl-r1), 5px 6px 0 var(--pl-r2), 6px 7px 0 var(--pl-r3), 7px 11px 9px rgba(35, 20, 8, .33);
   transition: transform .28s ease, box-shadow .28s ease, filter .2s; }
-.pl:hover { filter: brightness(1.03); }
+@media (hover: hover) { .pl:hover { filter: brightness(1.03); } }
 .pl-lice { position: absolute; left: 4px; top: 5px; width: 52px; height: 67px; pointer-events: none; }
 /* izbrana: dvignjena, toplo rumena in z zlatim okvirjem, da jo najdeš tudi po tem, ko pogledaš drugam */
 .pl.izbrana { transform: translate(-3px, -10px);

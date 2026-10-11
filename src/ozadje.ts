@@ -1,5 +1,5 @@
 // Ozadje: poslikava po letnem času, prazniku ali kraju, rahla megla in nežno padajoči listi.
-import { S } from "./shramba";
+import { S, jeMobilnaNaprava } from "./shramba";
 import { letniCas, praznik, type LetniCas } from "./koledar";
 
 const BASE = import.meta.env.BASE_URL;
@@ -69,21 +69,32 @@ function novDelec(w: number, h: number, vrsta: Vrsta, zgoraj: boolean, hitro = f
 }
 
 let tihiDelci: Delec[] = [], slavje: Delec[] = [], slavjeDo = 0, zanka = 0;
+let zbudi: () => void = () => {};
 const mirno = () => !S.nastavitve.gibanje || matchMedia("(prefers-reduced-motion: reduce)").matches;
+// varčno: listi so mehki, zato zadošča 1 točka platna na CSS točko in 24–30 slik na sekundo;
+// ko ni ničesar za risati (gibanje izklopljeno), zanka sploh ne teče
+const MOBILNO = jeMobilnaNaprava(), FPS = MOBILNO ? 24 : 30;
 
 export function zazeniDelce(): void {
   const c = document.getElementById("delci") as HTMLCanvasElement;
   const ctx = c.getContext("2d")!;
-  const velikost = () => { const dpr = Math.min(2, devicePixelRatio || 1); c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  const velikost = () => { c.width = innerWidth; c.height = innerHeight; };
   velikost(); addEventListener("resize", velikost);
-  let zadnji = performance.now();
+  let zadnji = 0, tece = false, prazno = true;
   const korak = (t: number) => {
-    const dt = Math.min(50, t - zadnji) / 16.7; zadnji = t;
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    zanka = 0;
+    if (document.hidden) { tece = false; return; }
+    if (zadnji && t - zadnji < 1000 / FPS - 2) { zanka = requestAnimationFrame(korak); return; }
+    const dt = Math.min(100, zadnji ? t - zadnji : 16.7) / 16.7; zadnji = t;
     const vrsta = vrstaZaCas(letniCas());
-    const cilj = mirno() ? 0 : 12;
+    const cilj = mirno() ? 0 : MOBILNO ? 8 : 12;
     while (tihiDelci.length < cilj) tihiDelci.push(novDelec(innerWidth, innerHeight, vrsta, tihiDelci.length > 0));
     if (tihiDelci.length > cilj) tihiDelci.length = cilj;
+    if (!tihiDelci.length && !slavje.length) {
+      if (!prazno) { ctx.clearRect(0, 0, innerWidth, innerHeight); prazno = true; }
+      tece = false; return;
+    }
+    ctx.clearRect(0, 0, innerWidth, innerHeight); prazno = false;
     for (const d of tihiDelci) {
       d.faza += .01 * dt; d.x += (d.vx + Math.sin(d.faza) * .25) * dt; d.y += d.vy * dt; d.a += d.va * dt;
       if (d.y > innerHeight + 20) Object.assign(d, novDelec(innerWidth, innerHeight, vrsta, true));
@@ -98,8 +109,12 @@ export function zazeniDelce(): void {
     }
     zanka = requestAnimationFrame(korak);
   };
-  cancelAnimationFrame(zanka); zanka = requestAnimationFrame(korak);
+  zbudi = () => { if (!tece) { tece = true; zadnji = 0; cancelAnimationFrame(zanka); zanka = requestAnimationFrame(korak); } };
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) zbudi(); });
+  zbudi();
 }
+/** Po spremembi nastavitve gibanja. */
+export function osveziDelce(): void { zbudi(); }
 
 /** Ob zmagi: padajoči cvetni listi nekaj sekund. */
 let nadT = 0;
@@ -110,4 +125,5 @@ export function cvetniDez(sekunde = 7): void {
   c.style.zIndex = "55"; clearTimeout(nadT);
   nadT = window.setTimeout(() => { c.style.zIndex = ""; }, (sekunde + 4) * 1000);
   for (let i = 0; i < 40; i++) slavje.push(novDelec(innerWidth, innerHeight, "cvet", true, true));
+  zbudi();
 }

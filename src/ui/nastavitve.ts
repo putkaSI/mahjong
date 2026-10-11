@@ -2,7 +2,7 @@
 import { S, shrani, jeMobilnaNaprava, type Glasba } from "../shramba";
 import { VRSTE, SLOGI_PLOSCIC, vstaviSimbole, liceHTML, liceSamostojno, type SlogPloscic } from "../art/ploscice";
 import { KRAJI } from "../kraji";
-import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje } from "../ozadje";
+import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje, osveziDelce } from "../ozadje";
 import { posodobiGlasbo, zvokPar, IZBIRE_GLASBE } from "../zvok";
 import { IKONE } from "./pogovor";
 import { zaslon } from "./nav";
@@ -61,7 +61,7 @@ export function nastavitve(nazaj: () => void): void {
   }));
   z.querySelector<HTMLInputElement>("#n-pomoc")!.addEventListener("change", e => { n.pomoc = (e.target as HTMLInputElement).checked; shrani(); });
   z.querySelector<HTMLInputElement>("#n-mehko")!.addEventListener("change", e => { n.mehko = (e.target as HTMLInputElement).checked; posodobi(); document.body.dataset.mehko = String(n.mehko); });
-  z.querySelector<HTMLInputElement>("#n-gibanje")!.addEventListener("change", e => { n.gibanje = (e.target as HTMLInputElement).checked; shrani(); });
+  z.querySelector<HTMLInputElement>("#n-gibanje")!.addEventListener("change", e => { n.gibanje = (e.target as HTMLInputElement).checked; shrani(); osveziDelce(); });
   z.querySelectorAll<HTMLInputElement>("input[name=ozadje]").forEach(r => r.addEventListener("change", () => { n.ozadje = r.value; posodobi(); }));
 }
 
