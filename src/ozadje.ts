@@ -16,12 +16,14 @@ export function samodejnoOzadje(): string {
 }
 
 let trenutno = "";
-/** Zamenja sliko ozadja z mehkim prehodom. Če slike ni, ostane topel preliv. */
-export function nastaviOzadje(id: string): void {
-  if (id === trenutno) return;
+const REZERVA = ["gore-poletje", "gore-pomlad"];
+/** Zamenja sliko ozadja z mehkim prehodom. Če slike ni, vzame rezervno, sicer ostane topel preliv. */
+export function nastaviOzadje(id: string, poskus = 0): void {
+  if (id === trenutno && poskus === 0) return;
   trenutno = id;
   const plast = document.getElementById("ozadje-slika")!;
   const img = new Image();
+  img.onerror = () => { if (poskus < REZERVA.length && trenutno === id) nastaviOzadje(REZERVA[poskus], poskus + 1); };
   img.onload = () => {
     const nova = document.createElement("div");
     nova.className = "ozadje-plast";
