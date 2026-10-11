@@ -5,7 +5,7 @@ import { postavitev, vsePostavitve } from "../igra/oblike";
 import { KRAJI, kraj } from "../kraji";
 import { S, shrani } from "../shramba";
 import { nastaviOzadje, samodejnoOzadje, cvetniDez } from "../ozadje";
-import { zvokPar, zvokZmaga } from "../zvok";
+import { zvokPar, zvokZmaga, preklopiGlasbo } from "../zvok";
 import { Plosca } from "./plosca";
 import { pogovor, obvestilo, IKONE, jeOdprtPogovor, zapriVse } from "./pogovor";
 import { nav, zaslon, fmtCas } from "./nav";
@@ -163,6 +163,8 @@ function meni(): void {
     naslov: "Premor", besedilo: "Igra je shranjena. Kadar koli lahko nadaljuješ, kjer si ostala.", zapriObKliku: true, razred: "meni",
     gumbi: [
       { tekst: "Nadaljuj igro", glavni: true, ikona: "igraj" },
+      { tekst: S.nastavitve.glasba === "brez" ? "Vklopi glasbo" : "Izklopi glasbo", ikona: S.nastavitve.glasba === "brez" ? "glasba" : "brezGlasbe", akcija: () => { preklopiGlasbo(); meni(); } },
+      { tekst: S.nastavitve.zvok ? "Izklopi zvonček" : "Vklopi zvonček", ikona: "zvonec", akcija: () => { S.nastavitve.zvok = !S.nastavitve.zvok; shrani(); zvokPar(); meni(); } },
       { tekst: "Začni znova", ikona: "znova", akcija: () => pogovor({ naslov: "Začnem znova?", besedilo: "Ista postavitev z istimi ploščicami, od začetka.", gumbi: [{ tekst: "Da, znova", glavni: true, akcija: znova }, { tekst: "Ne" }] }) },
       { tekst: "Nova igra", ikona: "ploscice", akcija: () => pogovor({ naslov: "Začneš novo igro?", besedilo: "Ta igra se bo končala.", gumbi: [{ tekst: "Da, nova igra", glavni: true, akcija: novaIgra }, { tekst: "Ne" }] }) },
       { tekst: "Nastavitve", ikona: "nastavitve", akcija: () => { const g = igra; ustavi(); nav.nastavitve(() => g && prikazi(g)); } },

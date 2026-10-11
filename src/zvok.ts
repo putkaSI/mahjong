@@ -1,5 +1,5 @@
 // Zvok: nežen zvonček ob paru (sintetiziran), melodija ob zmagi in izbirna glasba v ozadju.
-import { S } from "./shramba";
+import { S, shrani } from "./shramba";
 
 const BASE = import.meta.env.BASE_URL;
 let ctx: AudioContext | null = null;
@@ -35,7 +35,17 @@ export function zvokZmaga(): void {
 }
 
 /* ---------- glasba v ozadju (datoteke v public/zvok) ---------- */
-const SEZNAMI: Record<string, string[]> = { narava: ["narava.mp3"], glasba: ["glasba-1.mp3", "glasba-2.mp3", "glasba-3.mp3"] };
+const SEZNAMI: Record<string, string[]> = { glasba: ["glasba-1.mp3", "glasba-2.mp3", "glasba-3.mp3", "glasba-4.mp3"] };
+/** Izbire glasbe, ki jih ponudimo (zvoki narave pridejo, ko bo datoteka na voljo). */
+export const IZBIRE_GLASBE: [string, string][] = [["brez", "Brez glasbe"], ["glasba", "Mirna kitajska glasba"]];
+
+/** Hitri vklop in izklop glasbe (zapomni si zadnjo izbiro). */
+export function preklopiGlasbo(): void {
+  const n = S.nastavitve;
+  if (n.glasba === "brez") n.glasba = (n.zadnjaGlasba in SEZNAMI ? n.zadnjaGlasba : "glasba") as typeof n.glasba;
+  else { n.zadnjaGlasba = n.glasba; n.glasba = "brez"; }
+  shrani(); posodobiGlasbo();
+}
 let predvajalnik: HTMLAudioElement | null = null, seznam = "", indeks = 0;
 
 function predvajaj(): void {
@@ -51,7 +61,7 @@ function predvajaj(): void {
 
 export function posodobiGlasbo(): void {
   const izbira = S.nastavitve.glasba;
-  if (izbira === "brez" || !S.nastavitve.zvok) { predvajalnik?.pause(); return; }
+  if (!(izbira in SEZNAMI)) { predvajalnik?.pause(); return; }
   if (izbira !== seznam || !predvajalnik) { seznam = izbira; indeks = Math.floor(Math.random() * SEZNAMI[izbira].length); predvajaj(); return; }
   predvajalnik.volume = Math.min(1, .35 * S.nastavitve.glasnost);
   if (predvajalnik.paused) predvajalnik.play().catch(() => {});

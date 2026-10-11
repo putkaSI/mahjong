@@ -5,8 +5,8 @@ import type { Tezavnost } from "./igra/pravila";
 export type Glasba = "brez" | "narava" | "glasba";
 export type Nastavitve = {
   ime: string; rojstniDan: string;      // "dan.mesec"
-  zvok: boolean; glasba: Glasba; glasnost: number;
-  ozadje: string;                       // "samodejno" ali id slike
+  zvok: boolean; glasba: Glasba; zadnjaGlasba: string; glasnost: number;
+  ozadje: string;                     // "samodejno" ali id slike
   gibanje: boolean; pomoc: boolean; mehko: boolean;
 };
 export type Napredek = {
@@ -18,7 +18,7 @@ type Vse = { nastavitve: Nastavitve; napredek: Napredek; igra: ShranjenaIgra | n
 
 const KLJUC = "mahjong-v1";
 const PRIVZETO: Vse = {
-  nastavitve: { ime: "", rojstniDan: "", zvok: true, glasba: "brez", glasnost: .6, ozadje: "samodejno", gibanje: true, pomoc: false, mehko: false },
+  nastavitve: { ime: "", rojstniDan: "", zvok: true, glasba: "brez", zadnjaGlasba: "glasba", glasnost: .6, ozadje: "samodejno", gibanje: true, pomoc: false, mehko: false },
   napredek: { resitve: {}, potovanje: {}, namigi: 3, tezavnost: "srednja", krog: 0 },
   igra: null,
 };

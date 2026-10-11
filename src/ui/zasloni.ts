@@ -6,6 +6,7 @@ import { vsePostavitve, postavitev } from "../igra/oblike";
 import type { Postavitev } from "../igra/postavitve";
 import { nastaviOzadje, samodejnoOzadje } from "../ozadje";
 import { IKONE, pogovor } from "./pogovor";
+import { preklopiGlasbo } from "../zvok";
 import { nav, zaslon } from "./nav";
 import { zacniNovo, naslednjaStopnja, nakljucnaPostavitev, razglednica } from "./igralni";
 
@@ -27,8 +28,15 @@ export function domov(): void {
         <button class="velik-gumb${ig ? "" : " glavni"}" id="d-pot">${IKONE.zemljevid}<span>Potovanje po svetu<small>${kNasl ? `Naslednji cilj: ${kNasl.ime}, ${nasl!.stopnja! + 1}. stopnja` : "Vse si prepotovala!"}</small></span></button>
         <button class="velik-gumb" id="d-proste">${IKONE.ploscice}<span>Proste postavitve<small>${vseh} oblik, rešenih ${resenih}</small></span></button>
       </div>
-      <div class="domov-mali"><button class="gumb" id="d-nast">${IKONE.nastavitve}<span>Nastavitve</span></button><button class="gumb" id="d-pomoc">${IKONE.pomoc}<span>Pomoč</span></button></div>
+      <div class="domov-mali"><button class="gumb" id="d-glasba"></button><button class="gumb" id="d-nast">${IKONE.nastavitve}<span>Nastavitve</span></button><button class="gumb" id="d-pomoc">${IKONE.pomoc}<span>Pomoč</span></button></div>
     </div>`);
+  const gGlasba = z.querySelector<HTMLButtonElement>("#d-glasba")!;
+  const oznaciGlasbo = () => {
+    const brez = S.nastavitve.glasba === "brez";
+    gGlasba.innerHTML = `${brez ? IKONE.glasba : IKONE.brezGlasbe}<span>${brez ? "Vklopi glasbo" : "Izklopi glasbo"}</span>`;
+  };
+  oznaciGlasbo();
+  gGlasba.addEventListener("click", () => { preklopiGlasbo(); oznaciGlasbo(); });
   z.querySelector("#d-nadaljuj")?.addEventListener("click", () => nav.nadaljuj());
   z.querySelector("#d-pot")!.addEventListener("click", () => nav.potovanje());
   z.querySelector("#d-proste")!.addEventListener("click", () => nav.postavitve());

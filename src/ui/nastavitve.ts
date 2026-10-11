@@ -3,7 +3,7 @@ import { S, shrani, type Glasba } from "../shramba";
 import { VRSTE } from "../art/ploscice";
 import { KRAJI } from "../kraji";
 import { IMENA_OZADIJ, nastaviOzadje, samodejnoOzadje } from "../ozadje";
-import { posodobiGlasbo, zvokPar } from "../zvok";
+import { posodobiGlasbo, zvokPar, IZBIRE_GLASBE } from "../zvok";
 import { IKONE } from "./pogovor";
 import { zaslon } from "./nav";
 
@@ -24,9 +24,9 @@ export function nastavitve(nazaj: () => void): void {
       <label class="nastavitev" for="n-rd"><span><b>Rojstni dan</b><small>Na ta dan te čaka praznično ozadje (npr. 3.5 za 3. maj)</small></span><input class="vnos kratek" id="n-rd" value="${n.rojstniDan}" placeholder="dan.mesec" inputmode="decimal"></label>
     </section>
     <section><h2>Zvok</h2>
-      ${stikalo("n-zvok", "Zvok", "Zvonček ob najdenem paru", n.zvok)}
+      ${stikalo("n-zvok", "Zvonček", "Nežen zvonček ob najdenem paru in ob zmagi", n.zvok)}
       <div class="nastavitev"><span><b>Glasba v ozadju</b></span><div class="izbire" role="radiogroup">
-        ${([["brez", "Brez"], ["narava", "Zvoki narave"], ["glasba", "Mirna glasba"]] as [Glasba, string][]).map(([v, t]) => `<label class="izbira"><input type="radio" name="glasba" value="${v}"${n.glasba === v ? " checked" : ""}><span>${t}</span></label>`).join("")}
+        ${(IZBIRE_GLASBE as [Glasba, string][]).map(([v, t]) => `<label class="izbira"><input type="radio" name="glasba" value="${v}"${n.glasba === v ? " checked" : ""}><span>${t}</span></label>`).join("")}
       </div></div>
       <label class="nastavitev" for="n-glasnost"><span><b>Glasnost</b></span><input type="range" id="n-glasnost" min="0.1" max="1" step="0.05" value="${n.glasnost}"></label>
     </section>
@@ -45,8 +45,10 @@ export function nastavitve(nazaj: () => void): void {
     const v = (e.target as HTMLInputElement).value.trim().replace(/\s/g, "").replace(/\.$/, "");
     if (v === "" || /^\d{1,2}\.\d{1,2}$/.test(v)) { n.rojstniDan = v; shrani(); }
   });
-  z.querySelector<HTMLInputElement>("#n-zvok")!.addEventListener("change", e => { n.zvok = (e.target as HTMLInputElement).checked; shrani(); posodobiGlasbo(); zvokPar(); });
-  z.querySelectorAll<HTMLInputElement>("input[name=glasba]").forEach(r => r.addEventListener("change", () => { n.glasba = r.value as Glasba; shrani(); posodobiGlasbo(); }));
+  z.querySelector<HTMLInputElement>("#n-zvok")!.addEventListener("change", e => { n.zvok = (e.target as HTMLInputElement).checked; shrani(); zvokPar(); });
+  z.querySelectorAll<HTMLInputElement>("input[name=glasba]").forEach(r => r.addEventListener("change", () => {
+    n.glasba = r.value as Glasba; if (n.glasba !== "brez") n.zadnjaGlasba = n.glasba; shrani(); posodobiGlasbo();
+  }));
   z.querySelector<HTMLInputElement>("#n-glasnost")!.addEventListener("change", e => { n.glasnost = Number((e.target as HTMLInputElement).value); shrani(); posodobiGlasbo(); zvokPar(); });
   z.querySelector<HTMLInputElement>("#n-pomoc")!.addEventListener("change", e => { n.pomoc = (e.target as HTMLInputElement).checked; shrani(); });
   z.querySelector<HTMLInputElement>("#n-mehko")!.addEventListener("change", e => { n.mehko = (e.target as HTMLInputElement).checked; posodobi(); document.body.dataset.mehko = String(n.mehko); });

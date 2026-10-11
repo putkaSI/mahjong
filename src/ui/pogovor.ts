@@ -52,4 +52,7 @@ export const IKONE: Record<string, string> = {
   ploscice: S(`<rect x="4" y="3" width="7" height="9" rx="1.5"/><rect x="13" y="3" width="7" height="9" rx="1.5"/><rect x="8.5" y="12" width="7" height="9" rx="1.5"/>`),
   kljucavnica: S(`<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>`),
   kljukica: S(`<path d="M5 12.5l4.5 4.5L19 7.5"/>`),
+  glasba: S(`<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>`),
+  brezGlasbe: S(`<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M3 3l18 18"/>`),
+  zvonec: S(`<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>`),
 };
