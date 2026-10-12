@@ -1,9 +1,9 @@
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
-// Na GitHub Pages teče igra pod /mahjong/, lokalno pod /.
+// Na GitHub Pages teče igra pod /mahjong/, na Vercelu (nastavi VERCEL=1) in lokalno pod /.
 export default defineConfig(({ command }) => ({
-  base: command === "build" ? (process.env.BASE ?? "/mahjong/") : "/",
+  base: command === "build" ? (process.env.BASE ?? (process.env.VERCEL ? "/" : "/mahjong/")) : "/",
   build: { target: "es2022", chunkSizeWarningLimit: 900 },
   plugins: [
     VitePWA({
